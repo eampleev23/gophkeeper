@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"log"
+)
 
 /*Сурвер GophKeeper позволяет клиентам пользователя надёжно
 и безопасно хранить логины, пароли, бинарные данные и прочую приватную информацию.
@@ -14,5 +16,12 @@ import "fmt"
 */
 
 func main() {
-	fmt.Println("Server gophkeeper init")
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func run() error {
+	return nil
 }
