@@ -20,10 +20,3 @@ stop-pg:
 clean-data:
 	sudo rm -rf ./db/data/
 
-.PHONY: build-datagen
-build-datagen:
-	go build -o ./app/bin/datagen app/cmd/datagen
-
-.PHONY: build-app
-build-app:
-	go build -o ./app/bin/employees app/cmd/employees
