@@ -69,6 +69,7 @@ func run() error {
 	r := chi.NewRouter()
 	r.Use(mL.RequestLogger)
 	r.Post("/api/user/register", h.Register)
+	r.Post("/api/user/login", h.Authentication)
 	err = http.ListenAndServe(c.RunAddr, r)
 	if err != nil {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
