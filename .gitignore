@@ -14,6 +14,7 @@
 
 # Binaries
 cmd/server/server
+cmd/client/client
 
 # Dependency directories (remove the comment below to include it)
 vendor/
