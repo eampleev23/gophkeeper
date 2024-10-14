@@ -52,6 +52,13 @@ func (h *Handlers) AddLoginPasswordHandler(w http.ResponseWriter, r *http.Reques
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+	newLoginPass, err := h.serv.InsertLoginPassword(r.Context(), req)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// Если мы здесь, то логин-пароль успешно добавлены.
+	h.l.ZL.Info("Success creating new login password", zap.Any("newLoginPass", newLoginPass))
 	w.WriteHeader(http.StatusOK)
 	return
 }

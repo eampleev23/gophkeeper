@@ -14,7 +14,7 @@ pg:
 
 .PHONY: stop-pg
 stop-pg:
-	docker stop praktikum-webinar-db
+	docker stop gophkeeper
 
 .PHONY: clean-data
 clean-data:
