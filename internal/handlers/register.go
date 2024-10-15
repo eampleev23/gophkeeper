@@ -58,7 +58,7 @@ func (h *Handlers) Register(w http.ResponseWriter, r *http.Request) {
 	// а в самом начале надо проверить на куку, возможно он уже авторизован и тогда надо отправлять
 	// внуреннюю ошибку сервера
 
-	err = h.au.SetNewCookie(w, newUser.ID)
+	err = h.au.SetNewCookie(w, newUser.ID, newUser.Login)
 	if err != nil {
 		h.l.ZL.Debug("Not authorize after success register", zap.Error(err))
 		w.WriteHeader(http.StatusOK)

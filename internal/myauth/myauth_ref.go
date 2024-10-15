@@ -57,7 +57,7 @@ func (au *Authorizer) Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(fn)
 }
 
-func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int) (err error) {
+func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int, userLogin string) (err error) {
 	au.l.ZL.Debug("setNewCookie got userID", zap.Int("userID", userID))
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, Claims{
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -65,7 +65,8 @@ func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int) (err error
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(au.c.TokenExp)),
 		},
 		// Собственное утверждение.
-		UserID: userID,
+		UserID:    userID,
+		UserLogin: userLogin,
 	})
 	tokenString, err := token.SignedString([]byte(au.c.SecretKey))
 	if err != nil {
@@ -82,7 +83,8 @@ func (au *Authorizer) SetNewCookie(w http.ResponseWriter, userID int) (err error
 // Claims описывает утверждения, хранящиеся в токене + добавляет кастомное UserID.
 type Claims struct {
 	jwt.RegisteredClaims
-	UserID int
+	UserID    int
+	UserLogin string
 }
 
 // GetUserID возвращает ID пользователя.

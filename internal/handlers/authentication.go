@@ -60,7 +60,7 @@ func (h *Handlers) Authentication(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = h.au.SetNewCookie(w, authUser.ID)
+	err = h.au.SetNewCookie(w, authUser.ID, authUser.Login)
 	if err != nil {
 		h.l.ZL.Error("SetNewCookie fail", zap.Error(err))
 		w.WriteHeader(http.StatusOK)
