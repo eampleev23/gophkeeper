@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"go.uber.org/zap"
 	"net/http"
@@ -29,7 +30,7 @@ func (h *Handlers) AddLoginPasswordHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Проверяем, не авторизован ли пользователь, отправивший запрос.
-	_, isAuth, err := h.GetUserID(r)
+	ownerID, isAuth, err := h.GetUserID(r)
 	if err != nil {
 		h.l.ZL.Error("GetUserID fail")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -44,21 +45,25 @@ func (h *Handlers) AddLoginPasswordHandler(w http.ResponseWriter, r *http.Reques
 
 	h.l.ZL.Info("Пользователь авторизован, можем двигаться дальше")
 	// Получаем данные в случае корректного запроса.
-	var req models.LoginPassword
+	var inputModel models.LoginPassword
 	// Декодер работает потоково, кажется это правильнее + короче, чем анмаршал.
 	dec := json.NewDecoder(r.Body)
-	if err := dec.Decode(&req); err != nil {
+	if err := dec.Decode(&inputModel); err != nil {
 		h.l.ZL.Info("cannot decode request JSON body", zap.Error(err))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	newLoginPass, err := h.serv.InsertLoginPassword(r.Context(), req)
+	// записываем значение ид автора запроса
+	fmt.Println("ownerID=", ownerID)
+	inputModel.OwnerID = ownerID
+	outputModel, err := h.serv.InsertLoginPassword(r.Context(), inputModel)
 	if err != nil {
+		h.l.ZL.Error("h.serv.InsertLoginPassword fail..", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	// Если мы здесь, то логин-пароль успешно добавлены.
-	h.l.ZL.Info("Success creating new login password", zap.Any("newLoginPass", newLoginPass))
+	h.l.ZL.Info("Success creating new login password", zap.Any("outputModel", outputModel))
 	w.WriteHeader(http.StatusOK)
 	return
 }

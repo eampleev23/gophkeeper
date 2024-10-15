@@ -2,12 +2,17 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
 )
 
 func (s *Services) InsertLoginPassword(
 	ctx context.Context,
-	model models.LoginPassword) (result models.LoginPassword, err error) {
+	inputModel models.LoginPassword) (outputModel models.LoginPassword, err error) {
 	s.l.ZL.Info("Insert login password service has started..")
-	return model, nil
+	outputModel, err = s.s.InsertLoginPassword(ctx, inputModel)
+	if err != nil {
+		return outputModel, fmt.Errorf("%w", err)
+	}
+	return outputModel, nil
 }
