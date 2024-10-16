@@ -11,6 +11,7 @@ func showAuthMenu(client *http.Client, cmd *go_console.Script, qh *question.Help
 		question.
 			NewQuestion(
 				"Для сохранения новой пары логин-пароль, введите l\n" +
+					"Для просмотра сохраненных паролей введите s\n" +
 					"Для выхода введите e\n"),
 	)
 	switch secondMenuItem {
@@ -22,5 +23,10 @@ func showAuthMenu(client *http.Client, cmd *go_console.Script, qh *question.Help
 		// разавторизуем пользователя и отправляем на приветственный экран
 		logout(client, cmd, qh, response)
 		break
+	case "s":
+		// разавторизуем пользователя и отправляем на приветственный экран
+		showDataItems(client, cmd, qh, response)
+		break
 	}
+
 }
