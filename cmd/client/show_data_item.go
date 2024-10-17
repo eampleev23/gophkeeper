@@ -1,5 +1,6 @@
 package main
 
+// iter4 init
 import (
 	"bytes"
 	"crypto/aes"
