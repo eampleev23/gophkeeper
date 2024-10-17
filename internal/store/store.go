@@ -21,6 +21,8 @@ type Store interface {
 	InsertLoginPassword(ctx context.Context, inputModel models.LoginPassword) (outputModel models.LoginPassword, err error)
 	// GetDataItemsByUserID возвращает все сохраненные пароли пользователя
 	GetDataItemsByUserID(ctx context.Context, userID int) (dataItems []models.DataItem, err error)
+	// GetLoginPassItemByID возвращает конкретную пару логин-пароль
+	GetLoginPassItemByID(ctx context.Context, userID, inputID int) (loginPassOutput models.LoginPassword, err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {
