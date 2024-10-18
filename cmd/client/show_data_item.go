@@ -19,9 +19,6 @@ import (
 var logiPasswordItem models.LoginPassword
 
 func showDataItem(client *http.Client, cmd *go_console.Script, qh *question.Helper, response *http.Response, inputID string) {
-	//var loginPassRequestStr = `{"id": "`
-	//loginPassRequestStr += inputID
-	//loginPassRequestStr += `,"}`
 	var loginPassRequestStr = `{"id":`
 	loginPassRequestStr += inputID
 	loginPassRequestStr += `}`
@@ -44,21 +41,24 @@ func showDataItem(client *http.Client, cmd *go_console.Script, qh *question.Help
 		}
 		err = json.Unmarshal(responseData, &logiPasswordItem)
 	}
-	fmt.Println("responde.StatusCode=", response.StatusCode)
-	fmt.Println("logiPasswordItem", logiPasswordItem)
 
+	unPackedLogin := unpackLogin(logiPasswordItem)
+	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedLogin)
+	//login(client, cmd, qh, response)
+	showDataItems(client, cmd, qh, nil)
+}
+
+func unpackLogin(inputLoginPassModel models.LoginPassword) (unpackedLogin string) {
 	// все пришло в нормальном виде, теперь надо конвертнуть в байты
-	encryptedLoginBytes := convertMineToBytes(logiPasswordItem.Login)
-	fmt.Println("encryptedLoginBytes", encryptedLoginBytes)
+	encryptedLoginBytes := convertMineToBytes(inputLoginPassModel.Login)
 
 	// теперь нужно получить байты из nonceLogin
-	fmt.Println("logiPasswordItem.NonceLogin string", logiPasswordItem.NonceLogin)
-	encryptedNonceLoginBytes := convertMineToBytes(logiPasswordItem.NonceLogin)
-	fmt.Println("encryptedNonceLoginBytes", encryptedNonceLoginBytes)
+	encryptedNonceLoginBytes := convertMineToBytes(inputLoginPassModel.NonceLogin)
 
 	// теперь вроде бы есть все необходимое для расшифровки
 	// расшифровываем
 	key := []byte("TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD")
+
 	// NewCipher создает и возвращает новый cipher.Block.
 	// Ключевым аргументом должен быть ключ AES, 16, 24 или 32 байта
 	// для выбора AES-128, AES-192 или AES-256.
@@ -73,19 +73,21 @@ func showDataItem(client *http.Client, cmd *go_console.Script, qh *question.Help
 		fmt.Printf("error: %v\n", err)
 		return
 	}
-	finalLogin, err := aesgcm.Open(nil, encryptedNonceLoginBytes, encryptedLoginBytes, nil) // расшифровываем
+	unpackedLoginBytes, err := aesgcm.Open(nil, encryptedNonceLoginBytes, encryptedLoginBytes, nil) // расшифровываем
 	if err != nil {
-		fmt.Printf("error: %v\n", err)
+		fmt.Println("Ошибка клиента, попробуйте обновить версию")
 		return
 	}
-	fmt.Println("finalLogin", string(finalLogin))
 	// логин расшифровали корректно, ура!
+	unpackedLogin = string(unpackedLoginBytes)
+	return unpackedLogin
 }
+
 func convertMineToBytes(mineStr string) []byte {
-	splited := strings.Split(mineStr, "!")
-	b := make([]byte, len(splited)-1)
-	for i := 0; i < len(splited)-1; i++ {
-		intVal, err := strconv.Atoi(splited[i])
+	splitedStr := strings.Split(mineStr, "!")
+	b := make([]byte, len(splitedStr)-1)
+	for i := 0; i < len(splitedStr)-1; i++ {
+		intVal, err := strconv.Atoi(splitedStr[i])
 		if err != nil {
 			fmt.Println("Ошибка клиента, попробуйте обновить версию")
 			return nil
