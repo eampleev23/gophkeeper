@@ -67,7 +67,7 @@ func (d DBStore) InsertLoginPassword(ctx context.Context, inputModel models.Logi
 		&outputModel.MetaName,
 		&outputModel.MetaValue)
 
-	// Шифруем логин, пароль пока оставляем в чистом виде
+	// Шифруем логин и пароль
 	key := []byte("TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD")
 	// NewCipher создает и возвращает новый cipher.Block.
 	// Ключевым аргументом должен быть ключ AES, 16, 24 или 32 байта
@@ -83,32 +83,48 @@ func (d DBStore) InsertLoginPassword(ctx context.Context, inputModel models.Logi
 		fmt.Printf("error: %v\n", err)
 		return
 	}
-	// создаём вектор инициализации
+	// создаём вектор инициализации для логина
 	nonceLogin, err := generateRandom(aesgcm.NonceSize())
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
 		return
 	}
+	// создаём вектор инициализации для пароля
+	noncePassword, err := generateRandom(aesgcm.NonceSize())
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		return
+	}
+
+	// переводим в байты логин и пароль
 	notEncryptedLogin := []byte(inputModel.Login)
+	notEncryptedPassword := []byte(inputModel.Password)
+
+	// шифруем логин и пароль
 	encryptedLogin := aesgcm.Seal(nil, nonceLogin, notEncryptedLogin, nil)
+	encryptedPassword := aesgcm.Seal(nil, noncePassword, notEncryptedPassword, nil)
 
 	// Видимо нужно парсить каждый байт в строку и эту строку сохранять в бд, как вам идея? ))
-
 	// таким образом encryptedLoginStr будет в виде строки с разделителем например !
 
-	// шифруем зашифрованный логин в строку
+	// шифруем зашифрованные логин и пароль в строку
 	encryptedLoginStr := byteToString(encryptedLogin)
+	encryptedPasswordStr := byteToString(encryptedPassword)
 	nonceLoginStr := byteToString(nonceLogin)
+	noncePasswordStr := byteToString(noncePassword)
 
 	tx.QueryRow( // нужен скан
 		`INSERT INTO
-    login_password_items (item_id, hash_login, hash_password, nonce_login)
-	VALUES($1, $2, $3, $4)
+	login_password_items (item_id, hash_login, hash_password, nonce_login, nonce_password)
+	VALUES($1, $2, $3, $4, $5)
 	RETURNING
-	    hash_login, hash_password`,
-		outputModel.ID, encryptedLoginStr, inputModel.Password, nonceLoginStr).Scan(
+	   item_id, hash_login, hash_password, nonce_login, nonce_password`,
+		outputModel.ID, encryptedLoginStr, encryptedPasswordStr, nonceLoginStr, noncePasswordStr).Scan(
+		&outputModel.ID,
 		&outputModel.Login,
-		&outputModel.Password)
+		&outputModel.Password,
+		&outputModel.NonceLogin,
+		&outputModel.NoncePassword)
 	tx.Commit()
 	return outputModel, err
 }

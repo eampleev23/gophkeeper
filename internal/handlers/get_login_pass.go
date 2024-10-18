@@ -55,7 +55,7 @@ func (h *Handlers) GetLoginPass(w http.ResponseWriter, r *http.Request) {
 		h.l.ZL.Error("GetLoginPassItemByID fail", zap.Error(err))
 		w.WriteHeader(http.StatusInternalServerError)
 	}
-	fmt.Println(loginPassItem)
+	fmt.Println("loginPassItem.NoncePassword=", loginPassItem.NoncePassword)
 	enc := json.NewEncoder(w)
 	w.Header().Set("content-type", "application/json")
 	if err := enc.Encode(loginPassItem); err != nil {

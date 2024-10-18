@@ -1,6 +1,5 @@
 package main
 
-// iter4 init
 import (
 	"bytes"
 	"crypto/aes"
@@ -43,8 +42,8 @@ func showDataItem(client *http.Client, cmd *go_console.Script, qh *question.Help
 	}
 
 	unPackedLogin := unpackLogin(logiPasswordItem)
-	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedLogin)
-	//login(client, cmd, qh, response)
+	unPackedPassword := unpackPassword(logiPasswordItem)
+	fmt.Printf("Запрашиваемые логин и пароль: %s::%s -----\n", unPackedLogin, unPackedPassword)
 	showDataItems(client, cmd, qh, nil)
 }
 
@@ -81,6 +80,42 @@ func unpackLogin(inputLoginPassModel models.LoginPassword) (unpackedLogin string
 	// логин расшифровали корректно, ура!
 	unpackedLogin = string(unpackedLoginBytes)
 	return unpackedLogin
+}
+
+func unpackPassword(inputLoginPassModel models.LoginPassword) (unpackedPassword string) {
+	// все пришло в нормальном виде, теперь надо конвертнуть в байты
+	encryptedPasswordBytes := convertMineToBytes(inputLoginPassModel.Password)
+
+	// теперь нужно получить байты из noncePassword
+	encryptedNoncePasswordBytes := convertMineToBytes(inputLoginPassModel.NoncePassword)
+
+	// теперь вроде бы есть все необходимое для расшифровки
+	// расшифровываем
+	key := []byte("TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD")
+
+	// NewCipher создает и возвращает новый cipher.Block.
+	// Ключевым аргументом должен быть ключ AES, 16, 24 или 32 байта
+	// для выбора AES-128, AES-192 или AES-256.
+	aesblock, err := aes.NewCipher(key)
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		return
+	}
+	// NewGCM возвращает заданный 128-битный блочный шифр
+	aesgcm, err := cipher.NewGCM(aesblock)
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		return
+	}
+	unpackedPasswordBytes, err := aesgcm.Open(nil, encryptedNoncePasswordBytes, encryptedPasswordBytes, nil) // расшифровываем
+	if err != nil {
+		fmt.Println("Ошибка клиента, попробуйте обновить версию")
+		return
+	}
+	// логин расшифровали корректно, ура!
+	unpackedPassword = string(unpackedPasswordBytes)
+	unpackedPassword = strings.TrimSuffix(unpackedPassword, ",")
+	return unpackedPassword
 }
 
 func convertMineToBytes(mineStr string) []byte {

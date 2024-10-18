@@ -43,10 +43,12 @@ func (d DBStore) GetLoginPassItemByID(
 	d.l.ZL.Info("GetLoginPassItemByID db method is called..")
 	// получаем данные по логину
 	row := d.dbConn.QueryRowContext(ctx,
-		`SELECT item_id, hash_login, hash_password, nonce_login FROM login_password_items WHERE item_id = $1 LIMIT 1`,
+		`SELECT item_id, hash_login, hash_password, nonce_login, nonce_password FROM login_password_items WHERE item_id = $1 LIMIT 1`,
 		inputID,
 	)
-	err = row.Scan(&loginPassOutput.ID, &loginPassOutput.Login, &loginPassOutput.Password, &loginPassOutput.NonceLogin) // Разбираем результат
+	err = row.Scan(&loginPassOutput.ID, &loginPassOutput.Login,
+		&loginPassOutput.Password, &loginPassOutput.NonceLogin,
+		&loginPassOutput.NoncePassword) // Разбираем результат
 	if err != nil {
 		return loginPassOutput, fmt.Errorf("faild to get login-pass couple by this id %w", err)
 	}
