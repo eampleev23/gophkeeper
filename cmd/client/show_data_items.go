@@ -29,7 +29,7 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 		}
 
 		for _, dataItem := range dataItems {
-			fmt.Printf("ID: %d - ", dataItem.ID)
+			fmt.Printf("ID: [%d] - ", dataItem.ID)
 			switch dataItem.DataType {
 			case 1:
 				fmt.Printf("[пара логин-пароль]")
@@ -38,7 +38,8 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 				fmt.Printf("[не известное значение, обновите клиент]")
 			}
 
-			fmt.Printf(" %s ", dataItem.MetaValue)
+			fmt.Printf(" -- %s -- ", dataItem.MetaValue)
+			fmt.Printf(" дата добавления: %s", dataItem.CreatedAt.Format("02.01.2006 15:04:05"))
 			fmt.Printf("\n")
 		}
 		inputID := qh.Ask(
