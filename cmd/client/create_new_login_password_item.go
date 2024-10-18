@@ -9,16 +9,10 @@ import (
 )
 
 func createNewLoginPasswordItem(client *http.Client, cmd *go_console.Script, qh *question.Helper, response *http.Response) {
-	metaName := qh.Ask(
-		question.
-			NewQuestion(
-				`Введите тип приложения (или не приложения) логин-пароль для которого вы хотите сохранить? Например "сайт": `).
-			SetDefaultAnswer("без названия"),
-	)
 	metaValue := qh.Ask(
 		question.
 			NewQuestion(
-				`Введите значение этого типа (например если это был сайт, то это может быть "yandex.ru"): `).
+				`Введите название (например "сайт facebook.com" или что-то в этом духе): `).
 			SetDefaultAnswer("без названия"),
 	)
 	inputLogin := qh.Ask(
@@ -31,9 +25,7 @@ func createNewLoginPasswordItem(client *http.Client, cmd *go_console.Script, qh 
 			NewQuestion(
 				`Введите Пароль: `),
 	)
-	var loginPassNewItemRequestStr = `{"meta-name": "`
-	loginPassNewItemRequestStr += metaName
-	loginPassNewItemRequestStr += `", "meta-value": "`
+	var loginPassNewItemRequestStr = `{"meta-value": "`
 	loginPassNewItemRequestStr += metaValue
 	loginPassNewItemRequestStr += `", "login": "`
 	loginPassNewItemRequestStr += inputLogin
@@ -52,7 +44,7 @@ func createNewLoginPasswordItem(client *http.Client, cmd *go_console.Script, qh 
 		fmt.Println("Ошибка получения ответа от сервера, попробуйте обновить версию клиента")
 	}
 	if response.StatusCode == http.StatusOK {
-		fmt.Printf("Вы удачно добавили пару логин-пароль для %s %s\n", metaName, metaValue)
+		fmt.Printf("Вы удачно добавили пару логин-пароль под названием %s \n", metaValue)
 		showAuthMenu(client, cmd, qh, response)
 	}
 	if response.StatusCode != http.StatusBadRequest {

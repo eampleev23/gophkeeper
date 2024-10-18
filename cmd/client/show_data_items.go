@@ -38,7 +38,6 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 				fmt.Printf("[не известное значение, обновите клиент]")
 			}
 
-			fmt.Printf(" %s ", dataItem.MetaName)
 			fmt.Printf(" %s ", dataItem.MetaValue)
 			fmt.Printf("\n")
 		}

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"go.uber.org/zap"
 	"net/http"
@@ -54,7 +53,6 @@ func (h *Handlers) AddLoginPasswordHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	// записываем значение ид автора запроса
-	fmt.Println("ownerID=", ownerID)
 	inputModel.OwnerID = ownerID
 	outputModel, err := h.serv.InsertLoginPassword(r.Context(), inputModel)
 	if err != nil {

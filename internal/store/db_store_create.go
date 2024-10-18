@@ -48,8 +48,8 @@ func (d DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (
 }
 
 func (d DBStore) InsertLoginPassword(ctx context.Context, inputModel models.LoginPassword) (outputModel models.LoginPassword, err error) {
-	d.l.ZL.Info("Зашли в InsertLoginPassword в DBStore..")
-	d.l.ZL.Info("", zap.Any("inputModel", inputModel))
+	d.l.ZL.Debug("Зашли в InsertLoginPassword в DBStore..")
+	d.l.ZL.Debug("", zap.Any("inputModel", inputModel))
 	tx, err := d.dbConn.BeginTx(ctx, nil)
 	if err != nil {
 		return models.LoginPassword{}, fmt.Errorf("Transaction fail.. %w", err)
@@ -57,14 +57,13 @@ func (d DBStore) InsertLoginPassword(ctx context.Context, inputModel models.Logi
 	defer tx.Rollback()
 	tx.QueryRow( // нужен скан
 		`INSERT INTO
-    data_items (data_type, owner_id, meta_name, meta_value)
-	VALUES($1, $2, $3, $4)
+    data_items (data_type, owner_id, meta_value)
+	VALUES($1, $2, $3)
 	RETURNING
-	    id, owner_id, meta_name, meta_value`,
-		1, inputModel.OwnerID, inputModel.MetaName, inputModel.MetaValue).Scan(
+	    id, owner_id, meta_value`,
+		1, inputModel.OwnerID, inputModel.MetaValue).Scan(
 		&outputModel.ID,
 		&outputModel.OwnerID,
-		&outputModel.MetaName,
 		&outputModel.MetaValue)
 
 	// Шифруем логин и пароль

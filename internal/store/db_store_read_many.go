@@ -12,7 +12,7 @@ func (d DBStore) GetDataItemsByUserID(ctx context.Context, userID int) (dataItem
 	rows, err := d.dbConn.QueryContext(
 		ctx,
 		`SELECT 
-    				id,data_type,owner_id,meta_name,meta_value
+    				id,data_type,owner_id,meta_value
 					FROM
 					    data_items
 					WHERE
@@ -22,7 +22,7 @@ func (d DBStore) GetDataItemsByUserID(ctx context.Context, userID int) (dataItem
 	}
 	for rows.Next() {
 		var v models.DataItem
-		err = rows.Scan(&v.ID, &v.DataType, &v.OwnerID, &v.MetaName, &v.MetaValue)
+		err = rows.Scan(&v.ID, &v.DataType, &v.OwnerID, &v.MetaValue)
 		if err != nil {
 			return nil, fmt.Errorf(" rows scan fail: %w", err)
 		}
@@ -30,7 +30,6 @@ func (d DBStore) GetDataItemsByUserID(ctx context.Context, userID int) (dataItem
 			zap.Int("id", v.ID),
 			zap.Int("data type", v.DataType),
 			zap.Int("owner id", v.OwnerID),
-			zap.String("meta name", v.MetaName),
 			zap.String("meta value", v.MetaValue),
 			zap.Int("id", v.ID),
 		)

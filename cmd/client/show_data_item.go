@@ -44,7 +44,7 @@ func showDataItem(client *http.Client, cmd *go_console.Script, qh *question.Help
 
 	unPackedLogin := unpackLogin(logiPasswordItem)
 	unPackedPassword := unpackPassword(logiPasswordItem)
-	fmt.Printf("Запрашиваемые логин и пароль: %s::%s -----\n", unPackedLogin, unPackedPassword)
+	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedPassword)
 	showDataItems(client, cmd, qh, nil)
 }
 
