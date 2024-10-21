@@ -1,0 +1,3 @@
+BEGIN TRANSACTION;
+ALTER TABLE login_password_items DROP CONSTRAINT login_password_items_data_items_id_fk;
+COMMIT;

@@ -1,0 +1,4 @@
+BEGIN TRANSACTION;
+    ALTER TABLE data_items
+    DROP COLUMN IF EXISTS owner_id;
+COMMIT;

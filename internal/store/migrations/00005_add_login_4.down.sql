@@ -1,0 +1,3 @@
+BEGIN TRANSACTION;
+ALTER TABLE login_password_items RENAME COLUMN item_id TO id;
+COMMIT;
