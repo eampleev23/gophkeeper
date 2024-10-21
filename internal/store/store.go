@@ -19,6 +19,8 @@ type Store interface {
 	GetUserByLoginAndPassword(ctx context.Context, userLoginReq models.UserLoginReq) (userBack models.User, err error)
 	// InsertLoginPassword - метод для добавления пары логин-пароль.
 	InsertLoginPassword(ctx context.Context, inputModel models.LoginPassword) (outputModel models.LoginPassword, err error)
+	// InsertBankCard - метод для добавления банковской карты.
+	InsertBankCard(ctx context.Context, inputModel models.BankCard) (outputModel models.BankCard, err error)
 	// GetDataItemsByUserID возвращает все сохраненные пароли пользователя
 	GetDataItemsByUserID(ctx context.Context, userID int) (dataItems []models.DataItem, err error)
 	// GetLoginPassItemByID возвращает конкретную пару логин-пароль

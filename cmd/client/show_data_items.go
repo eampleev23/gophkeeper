@@ -38,6 +38,9 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 			case 1:
 				fmt.Printf("[пара логин-пароль]")
 				break
+			case 2:
+				fmt.Printf("[банковская карта]")
+				break
 			default:
 				fmt.Printf("[не известное значение, обновите клиент]")
 			}

@@ -1,6 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
+	"github.com/eampleev23/gophkeeper/internal/models"
+	"go.uber.org/zap"
 	"net/http"
 	"strings"
 )
@@ -38,5 +41,26 @@ func (h *Handlers) AddBankCardData(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	h.l.ZL.Info("Пользователь авторизован, можем двигаться дальше")
+	// Получаем данные в случае корректного запроса.
+	var inputModel models.BankCard
+	// Декодер работает потоково, кажется это правильнее + короче, чем анмаршал.
+	dec := json.NewDecoder(r.Body)
+	if err := dec.Decode(&inputModel); err != nil {
+		h.l.ZL.Info("cannot decode request JSON body", zap.Error(err))
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	// записываем значение ид автора запроса
+	inputModel.OwnerID = ownerID
 
+	outputModel, err := h.serv.InsertBankCard(r.Context(), inputModel)
+	if err != nil {
+		h.l.ZL.Error("h.serv.InsertBankCard fail..", zap.Error(err))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	// Если мы здесь, то логин-пароль успешно добавлены.
+	h.l.ZL.Info("Success creating new bank card", zap.Any("outputModel", outputModel))
+	w.WriteHeader(http.StatusOK)
+	return
 }

@@ -34,6 +34,7 @@ func createNewLoginPasswordItem(client *http.Client, cmd *go_console.Script, qh 
 	loginPassNewItemRequestStr += `,"}`
 
 	var loginPassNewItemRequestBytes = []byte(loginPassNewItemRequestStr)
+
 	request, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/user/add-login-password", bytes.NewBuffer(loginPassNewItemRequestBytes))
 	if err != nil {
 		fmt.Println("Ошибка, попробуйте обновить версию клиента")
