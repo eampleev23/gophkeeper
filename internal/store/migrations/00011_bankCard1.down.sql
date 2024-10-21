@@ -1,0 +1,6 @@
+BEGIN
+TRANSACTION;
+
+DROP TABLE IF EXISTS bank_card_items;
+
+COMMIT;
