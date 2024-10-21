@@ -8,6 +8,7 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"io"
 	"net/http"
+	"strconv"
 )
 
 var dataItems []models.DataItem
@@ -28,8 +29,11 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 			fmt.Println("ошибка:", err)
 		}
 
+		var indexes = make(map[int]string)
+		indexFront := 1
 		for _, dataItem := range dataItems {
-			fmt.Printf("ID: [%d] - ", dataItem.ID)
+			//fmt.Printf("ID: [%d] - ", dataItem.ID)
+			fmt.Printf("ID: [%d] - ", indexFront)
 			switch dataItem.DataType {
 			case 1:
 				fmt.Printf("[пара логин-пароль]")
@@ -41,6 +45,8 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 			fmt.Printf(" -- %s -- ", dataItem.MetaValue)
 			fmt.Printf(" дата добавления: %s", dataItem.CreatedAt.Format("02.01.2006 15:04:05"))
 			fmt.Printf("\n")
+			indexes[indexFront] = strconv.Itoa(dataItem.ID)
+			indexFront++
 		}
 		inputID := qh.Ask(
 			question.
@@ -48,6 +54,10 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 					"Для просмотра данных введите ID или 0 для возврата к предыдущему меню\n").
 				SetDefaultAnswer("0"),
 		)
-		showDataItem(client, cmd, qh, response, inputID)
+		inputIDInt, err := strconv.Atoi(inputID)
+		if err != nil {
+			fmt.Println("Ошибка клиента, попробуйте обновить версию")
+		}
+		showDataItem(client, cmd, qh, response, indexes[inputIDInt])
 	}
 }
