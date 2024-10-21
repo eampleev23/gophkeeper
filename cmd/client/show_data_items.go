@@ -32,7 +32,6 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 		var indexes = make(map[int]string)
 		indexFront := 1
 		for _, dataItem := range dataItems {
-			//fmt.Printf("ID: [%d] - ", dataItem.ID)
 			fmt.Printf("ID: [%d] - ", indexFront)
 			switch dataItem.DataType {
 			case 1:
@@ -61,6 +60,24 @@ func showDataItems(client *http.Client, cmd *go_console.Script, qh *question.Hel
 		if err != nil {
 			fmt.Println("Ошибка клиента, попробуйте обновить версию")
 		}
-		showDataItem(client, cmd, qh, response, indexes[inputIDInt])
+		// определяем какого типа зашифрованное значение хочет посмотреть пользователь (логин пароль или банковская карта и тд)
+		var typeOfDataToShow string
+		for _, dataItem := range dataItems {
+			dataItemIdInt := strconv.Itoa(dataItem.ID)
+			if dataItemIdInt == indexes[inputIDInt] {
+				typeOfDataToShow = strconv.Itoa(dataItem.DataType)
+			}
+		}
+		switch typeOfDataToShow {
+		case "1":
+			showLoginPassItem(client, cmd, qh, response, indexes[inputIDInt])
+			break
+		case "2":
+			showBankCardItem(client, cmd, qh, response, indexes[inputIDInt])
+			break
+		default:
+			fmt.Println("Ошибка клиента, попробуйте обновить версию")
+			break
+		}
 	}
 }

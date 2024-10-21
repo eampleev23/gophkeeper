@@ -7,6 +7,26 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+func (d DBStore) GetBankCardByID(ctx context.Context, userID, inputID int) (outputBankCard models.BankCard, err error) {
+	d.l.ZL.Info("DBStore method GetBankCardByID has called")
+	row := d.dbConn.QueryRowContext(ctx,
+		`SELECT item_id,
+       card_number, valid_thru, owner_name, cvc, nonce_card_number,
+       nonce_valid_thru, nonce_owner_name, nonce_cvc
+       FROM bank_card_items WHERE item_id = $1 LIMIT 1`,
+		inputID,
+	)
+	err = row.Scan(&outputBankCard.ID, &outputBankCard.CardNumber,
+		&outputBankCard.ValidThru, &outputBankCard.OwnerName, &outputBankCard.CVC,
+		&outputBankCard.NonceCardNumber,
+		&outputBankCard.NonceValidThru, &outputBankCard.NonceOwnerName,
+		&outputBankCard.NonceCVC) // Разбираем результат
+	if err != nil {
+		return outputBankCard, fmt.Errorf("faild to get login-pass couple by this id %w", err)
+	}
+	return outputBankCard, nil
+}
+
 func (d DBStore) GetUserByLoginAndPassword(
 	ctx context.Context,
 	userLoginReq models.UserLoginReq,

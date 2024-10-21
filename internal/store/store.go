@@ -25,6 +25,8 @@ type Store interface {
 	GetDataItemsByUserID(ctx context.Context, userID int) (dataItems []models.DataItem, err error)
 	// GetLoginPassItemByID возвращает конкретную пару логин-пароль
 	GetLoginPassItemByID(ctx context.Context, userID, inputID int) (loginPassOutput models.LoginPassword, err error)
+	// GetBankCardByID возвращает данные о конкретной банковской карте
+	GetBankCardByID(ctx context.Context, userID, inputID int) (bankCardOutput models.BankCard, err error)
 }
 
 func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {
