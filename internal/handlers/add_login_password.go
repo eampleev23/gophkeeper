@@ -18,7 +18,7 @@ import (
 }
 */
 
-func (h *Handlers) AddLoginPasswordHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handlers) AddLoginPasswordData(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Info("Add Login Password Handler")
 	// Проверяем формат запроса
 	contentType := r.Header.Get("Content-Type")
