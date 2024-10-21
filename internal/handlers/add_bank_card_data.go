@@ -1,6 +1,9 @@
 package handlers
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 /*
 На вход хэндлер ожидает json такого формата(пользователь должен быть авторизован):
@@ -15,4 +18,25 @@ import "net/http"
 
 func (h *Handlers) AddBankCardData(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Info("Handling /AddBankCardData request")
+	// Проверяем формат запроса
+	contentType := r.Header.Get("Content-Type")
+	supportsJSON := strings.Contains(contentType, "application/json")
+	if !supportsJSON {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	// Проверяем, не авторизован ли пользователь, отправивший запрос.
+	ownerID, isAuth, err := h.GetUserID(r)
+	if err != nil {
+		h.l.ZL.Error("GetUserID fail")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if !isAuth {
+		h.l.ZL.Info("Пользователь не авторизован, в ответе отказано")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+	h.l.ZL.Info("Пользователь авторизован, можем двигаться дальше")
+
 }
