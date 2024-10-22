@@ -27,7 +27,7 @@ func (clientApp *ClientApp) Login(response *http.Response) error {
 				}
 				fmt.Printf("Добро пожаловать в gophkeeper, %s!\n", claims.UserLogin)
 				clientApp.ShowAuthMenu(response)
-				continue
+				return err
 			}
 		}
 		return nil
