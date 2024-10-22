@@ -20,7 +20,7 @@ func (clientApp *ClientApp) Login(response *http.Response) error {
 				claims := &myauth.Claims{}
 				// Парсим из строки токена tokenString в структуру claims
 				_, err := jwt.ParseWithClaims(v.Value, claims, func(token *jwt.Token) (interface{}, error) {
-					return []byte("e4853f5c4810101e88f1898db21c15d3"), nil
+					return []byte(clientApp.SecretKey), nil
 				})
 				if err != nil {
 					fmt.Println("Ошибка авторизации, обратитесь к администратору")
