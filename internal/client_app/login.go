@@ -13,23 +13,7 @@ import (
 func (clientApp *ClientApp) Login(response *http.Response) error {
 	// авторизован ли пользователь и если да, то под каким именем, приветствуем его и показываем меню
 	if response != nil {
-		for _, v := range response.Cookies() {
-			if v.Name == "token" {
-				// значит клиент уже авторизован, можем получить его логин и поприветствовать
-				// Создаем экземпляр структуры с утверждениями
-				claims := &myauth.Claims{}
-				// Парсим из строки токена tokenString в структуру claims
-				_, err := jwt.ParseWithClaims(v.Value, claims, func(token *jwt.Token) (interface{}, error) {
-					return []byte(clientApp.SecretKey), nil
-				})
-				if err != nil {
-					fmt.Println("Ошибка авторизации, обратитесь к администратору")
-				}
-				fmt.Printf("Добро пожаловать в gophkeeper, %s!\n", claims.UserLogin)
-				clientApp.ShowAuthMenu(response)
-				return err
-			}
-		}
+		clientApp.checkLoginAndSayHello(response)
 		return nil
 	}
 	inputLogin := clientApp.Qh.Ask(
@@ -81,4 +65,25 @@ func (clientApp *ClientApp) Login(response *http.Response) error {
 		return err
 	}
 	return err
+}
+
+func (clientApp *ClientApp) checkLoginAndSayHello(response *http.Response) {
+	for _, v := range response.Cookies() {
+		if v.Name == "token" {
+			// значит клиент уже авторизован, можем получить его логин и поприветствовать
+			// Создаем экземпляр структуры с утверждениями
+			claims := &myauth.Claims{}
+			// Парсим из строки токена tokenString в структуру claims
+			_, err := jwt.ParseWithClaims(v.Value, claims, func(token *jwt.Token) (interface{}, error) {
+				return []byte(clientApp.SecretKey), nil
+			})
+			if err != nil {
+				fmt.Println("Ошибка авторизации, обратитесь к администратору")
+				return
+			}
+			fmt.Printf("Добро пожаловать в gophkeeper, %s!\n", claims.UserLogin)
+			clientApp.ShowAuthMenu(response)
+			return
+		}
+	}
 }

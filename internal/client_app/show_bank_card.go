@@ -1,15 +1,12 @@
 package client_app
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/json"
 	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
-	"io"
 	"net/http"
-	url2 "net/url"
 	"strings"
 )
 
@@ -22,33 +19,26 @@ func (clientApp *ClientApp) ShowBankCard(response *http.Response, inputID string
 	bankCardRequestStr += `}`
 
 	var bankCardRequest = []byte(bankCardRequestStr)
-	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/get-bank-card")
+
+	responseData, _, err := clientApp.RequestToApi(bankCardRequest, "api/user/get-bank-card", http.MethodPost)
 	if err != nil {
+		fmt.Println("Ошибка при получении ответа от сервера, попробуйте обновить клиент")
 		return err
 	}
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bankCardRequest))
+	err = json.Unmarshal(responseData, &bankCardItem)
 	if err != nil {
-		fmt.Println("Ошибка формирования запроса, попробуйте обновить приложение")
+		fmt.Println("Ошибка парсинга ответа сервера, попробуйте обновить клиент")
+		return err
 	}
-	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
-	response, err = clientApp.HttpClient.Do(request)
-	if err != nil {
-		fmt.Println("Ошибка формирования запроса, попробуйте обновить приложение")
-	}
-	if response.StatusCode == http.StatusOK {
-		responseData, err := io.ReadAll(response.Body)
-		if err != nil {
-			return err
-		}
-		err = json.Unmarshal(responseData, &bankCardItem)
-		unPackedCardNumber := unpackCardNumber(bankCardItem)
-		unPackedValidThru := unpackValidThru(bankCardItem)
-		unPackedOwnerName := unpackOwnerName(bankCardItem)
-		unPackedCVC := unpackCVC(bankCardItem)
-		unPackedCVC = strings.TrimSuffix(unPackedCVC, ",")
-		fmt.Printf("Номер карты: %s, Срок годности: %s\n", unPackedCardNumber, unPackedValidThru)
-		fmt.Printf("Имя владельца: %s, Код CVC: %s\n", unPackedOwnerName, unPackedCVC)
-	}
+
+	unPackedCardNumber := unpackCardNumber(bankCardItem)
+	unPackedValidThru := unpackValidThru(bankCardItem)
+	unPackedOwnerName := unpackOwnerName(bankCardItem)
+	unPackedCVC := unpackCVC(bankCardItem)
+	unPackedCVC = strings.TrimSuffix(unPackedCVC, ",")
+	fmt.Printf("Номер карты: %s, Срок годности: %s\n", unPackedCardNumber, unPackedValidThru)
+	fmt.Printf("Имя владельца: %s, Код CVC: %s\n", unPackedOwnerName, unPackedCVC)
+
 	clientApp.ShowDataItems(nil)
 	return nil
 }

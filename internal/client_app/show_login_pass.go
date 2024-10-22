@@ -1,15 +1,12 @@
 package client_app
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/json"
 	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
-	"io"
 	"net/http"
-	url2 "net/url"
 	"strconv"
 	"strings"
 )
@@ -17,37 +14,25 @@ import (
 var logiPasswordItem models.LoginPassword
 
 func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID string) error {
+
 	var loginPassRequestStr = `{"id":`
 	loginPassRequestStr += inputID
 	loginPassRequestStr += `}`
 
 	var loginPassRequest = []byte(loginPassRequestStr)
-	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/get-login-pass")
+
+	responseData, _, err := clientApp.RequestToApi(loginPassRequest, "api/user/get-login-pass", http.MethodPost)
 	if err != nil {
+		fmt.Println("Ошибка при получении ответа от сервера, попробуйте обновить клиент")
 		return err
 	}
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(loginPassRequest))
-	if err != nil {
-		fmt.Println("Ошибка формирования запроса, обратитесь к администратору")
-	}
-	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
-	response, err = clientApp.HttpClient.Do(request)
-	if err != nil {
-		fmt.Println("Ошибка получения ответа, обратитесь к администратору")
-		return err
-	}
-	if response.StatusCode == http.StatusOK {
-		responseData, err := io.ReadAll(response.Body)
-		if err != nil {
-			fmt.Println("Ошибка чтения ответа. попробуйте обновить клиент")
-			return err
-		}
-		err = json.Unmarshal(responseData, &logiPasswordItem)
-	}
+
+	err = json.Unmarshal(responseData, &logiPasswordItem)
 
 	unPackedLogin := unpackLogin(logiPasswordItem)
 	unPackedPassword := unpackPassword(logiPasswordItem)
 	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedPassword)
+
 	clientApp.ShowDataItems(nil)
 	return err
 }

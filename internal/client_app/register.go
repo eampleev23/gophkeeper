@@ -1,11 +1,9 @@
 package client_app
 
 import (
-	"bytes"
 	"fmt"
 	"github.com/DrSmithFr/go-console/question"
 	"net/http"
-	url2 "net/url"
 )
 
 func (clientApp *ClientApp) Register() error {
@@ -29,21 +27,12 @@ func (clientApp *ClientApp) Register() error {
 	registerRequestStr += `,"}`
 
 	var registerRequest = []byte(registerRequestStr)
-	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/register")
+	_, response, err := clientApp.RequestToApi(registerRequest, "api/user/register", http.MethodPost)
 	if err != nil {
+		fmt.Println("Ошибка при получении ответа от сервера, попробуйте обновить клиент")
 		return err
 	}
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(registerRequest))
 
-	if err != nil {
-		fmt.Println("Ошибка формирования запроса, обратитесь к администратору")
-	}
-	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
-	response, err := clientApp.HttpClient.Do(request)
-	if err != nil {
-		fmt.Println("Ошибка получения ответа, обратитесь к администратору")
-		return err
-	}
 	if response.StatusCode == http.StatusOK {
 		fmt.Println("Вы удачно зарегистрировались и авторизовались")
 		clientApp.Login(response)
