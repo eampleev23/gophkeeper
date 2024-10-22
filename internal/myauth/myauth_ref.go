@@ -3,8 +3,8 @@ package myauth
 import (
 	"context"
 	"fmt"
-	"github.com/eampleev23/gophkeeper/internal/cnf"
 	"github.com/eampleev23/gophkeeper/internal/mlg"
+	"github.com/eampleev23/gophkeeper/internal/server_app"
 	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
 	"log"
@@ -14,13 +14,13 @@ import (
 
 type Authorizer struct {
 	l *mlg.ZapLog
-	c *cnf.Config
+	c *server_app.Config
 }
 
 var keyLogger mlg.Key = mlg.KeyLoggerCtx
 
 // Initialize инициализирует синглтон авторизовывальщика с секретным ключом.
-func Initialize(c *cnf.Config, l *mlg.ZapLog) (*Authorizer, error) {
+func Initialize(c *server_app.Config, l *mlg.ZapLog) (*Authorizer, error) {
 	au := &Authorizer{
 		c: c,
 		l: l,

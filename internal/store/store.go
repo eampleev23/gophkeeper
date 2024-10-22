@@ -3,9 +3,9 @@ package store
 import (
 	"context"
 	"fmt"
-	"github.com/eampleev23/gophkeeper/internal/cnf"
 	"github.com/eampleev23/gophkeeper/internal/mlg"
 	"github.com/eampleev23/gophkeeper/internal/models"
+	"github.com/eampleev23/gophkeeper/internal/server_app"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 )
 
@@ -29,7 +29,7 @@ type Store interface {
 	GetBankCardByID(ctx context.Context, userID, inputID int) (bankCardOutput models.BankCard, err error)
 }
 
-func NewStorage(c *cnf.Config, l *mlg.ZapLog) (Store, error) {
+func NewStorage(c *server_app.Config, l *mlg.ZapLog) (Store, error) {
 	s, err := NewDBStore(c, l)
 	if err != nil {
 		return nil, fmt.Errorf("error creating new db store: %w", err)

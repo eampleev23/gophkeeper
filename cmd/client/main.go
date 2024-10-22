@@ -2,28 +2,26 @@ package main
 
 import (
 	"fmt"
-	"github.com/DrSmithFr/go-console"
 	"github.com/DrSmithFr/go-console/question"
-	"net/http"
-	"net/http/cookiejar"
-	"os"
+	"github.com/eampleev23/gophkeeper/internal/client_app"
+	"log"
 )
 
 func main() {
 
-	jar, err := cookiejar.New(nil)
+	err := run()
 	if err != nil {
-		fmt.Println("Ошибка клиента, попробуйте обновить версию..")
-		main()
+		log.Fatal(err)
 	}
-	client := &http.Client{
-		Jar: jar,
+}
+
+func run() error {
+	app, err := client_app.NewApp()
+	if err != nil {
+		return fmt.Errorf("failed to initialize a new config: %w", err)
 	}
 
-	cmd := go_console.NewScript().Build()
-	qh := question.NewHelper(os.Stdin, cmd.Output)
-
-	firstMenuItem := qh.Ask(
+	firstMenuItem := app.Qh.Ask(
 		question.
 			NewQuestion(
 				"Добро пожаловать в gophkeeper - менеджер паролей.\n" +
@@ -34,11 +32,15 @@ func main() {
 	switch firstMenuItem {
 	case "r":
 		// запрашиваем данные для регистрации
-		register(client, cmd, qh)
+		app.Register()
+		//register(client, cmd, qh)
 		break
 	case "a":
 		// запрашиваем данные для авторизации
-		login(client, cmd, qh, nil)
+		//login(app.HttpClient, app.Cmd, app.Qh, nil)
+		app.Login(nil)
+		//login(client, cmd, qh, nil)
 		break
 	}
+	return nil
 }

@@ -1,9 +1,9 @@
 package handlers
 
 import (
-	"github.com/eampleev23/gophkeeper/internal/cnf"
 	"github.com/eampleev23/gophkeeper/internal/mlg"
 	"github.com/eampleev23/gophkeeper/internal/myauth"
+	"github.com/eampleev23/gophkeeper/internal/server_app"
 	"github.com/eampleev23/gophkeeper/internal/services"
 	"github.com/eampleev23/gophkeeper/internal/store"
 	"net/http"
@@ -11,7 +11,7 @@ import (
 
 type Handlers struct {
 	s    store.Store
-	c    *cnf.Config
+	c    *server_app.Config
 	l    *mlg.ZapLog
 	au   myauth.Authorizer
 	serv services.Services
@@ -19,7 +19,7 @@ type Handlers struct {
 
 func NewHandlers(
 	s store.Store,
-	c *cnf.Config,
+	c *server_app.Config,
 	l *mlg.ZapLog,
 	au myauth.Authorizer,
 	serv services.Services) (
