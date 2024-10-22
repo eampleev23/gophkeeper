@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/DrSmithFr/go-console/question"
 	"net/http"
+	url2 "net/url"
 )
 
-func (clientApp *ClientApp) CreateNewBankCard(response *http.Response) {
+func (clientApp *ClientApp) CreateNewBankCard(response *http.Response) error {
 	inputMetaValue := clientApp.Qh.Ask(
 		question.
 			NewQuestion(
@@ -48,7 +49,12 @@ func (clientApp *ClientApp) CreateNewBankCard(response *http.Response) {
 
 	var bankCardNewItemRequestBytes = []byte(bankCardNewItemRequestStr)
 
-	request, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/user/add-bank-card", bytes.NewBuffer(bankCardNewItemRequestBytes))
+	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/add-bank-card")
+	if err != nil {
+		return err
+	}
+
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bankCardNewItemRequestBytes))
 	if err != nil {
 		fmt.Println("Ошибка, попробуйте обновить версию клиента")
 	}
@@ -59,7 +65,6 @@ func (clientApp *ClientApp) CreateNewBankCard(response *http.Response) {
 	}
 	if response.StatusCode == http.StatusOK {
 		fmt.Printf("Вы удачно добавили данные банковской карты под названием %s \n", inputMetaValue)
-		//showAuthMenu(client, cmd, qh, response)
 		clientApp.ShowAuthMenu(response)
 	}
 	if response.StatusCode != http.StatusBadRequest {
@@ -70,7 +75,7 @@ func (clientApp *ClientApp) CreateNewBankCard(response *http.Response) {
 	}
 	if response.StatusCode != http.StatusUnauthorized {
 		fmt.Println("Необходимо авторизоваться")
-		//login(client, cmd, qh, response)
 		clientApp.Login(response)
 	}
+	return nil
 }

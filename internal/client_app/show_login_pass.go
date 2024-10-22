@@ -9,19 +9,24 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"io"
 	"net/http"
+	url2 "net/url"
 	"strconv"
 	"strings"
 )
 
 var logiPasswordItem models.LoginPassword
 
-func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID string) {
+func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID string) error {
 	var loginPassRequestStr = `{"id":`
 	loginPassRequestStr += inputID
 	loginPassRequestStr += `}`
 
 	var loginPassRequest = []byte(loginPassRequestStr)
-	request, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/user/get-login-pass", bytes.NewBuffer(loginPassRequest))
+	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/get-login-pass")
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(loginPassRequest))
 	if err != nil {
 		fmt.Println("Ошибка формирования запроса, обратитесь к администратору")
 	}
@@ -34,7 +39,7 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 		responseData, err := io.ReadAll(response.Body)
 		if err != nil {
 			fmt.Println("Ошибка чтения ответа. попробуйте обновить клиент")
-			return
+			return err
 		}
 		err = json.Unmarshal(responseData, &logiPasswordItem)
 	}
@@ -42,8 +47,8 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 	unPackedLogin := unpackLogin(logiPasswordItem)
 	unPackedPassword := unpackPassword(logiPasswordItem)
 	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedPassword)
-	//showDataItems(client, cmd, qh, nil)
 	clientApp.ShowDataItems(nil)
+	return nil
 }
 
 func unpackLogin(inputLoginPassModel models.LoginPassword) (unpackedLogin string) {

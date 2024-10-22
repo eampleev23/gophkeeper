@@ -7,13 +7,18 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"io"
 	"net/http"
+	url2 "net/url"
 	"strconv"
 )
 
 var dataItems []models.DataItem
 
-func (clientApp *ClientApp) ShowDataItems(response *http.Response) {
-	request, err := http.NewRequest(http.MethodGet, "http://localhost:8080/api/user/get-data-items", nil)
+func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
+	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/get-data-items")
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		fmt.Println("Ошибка формирования запроса, обратитесь к администратору")
 	}
@@ -69,11 +74,9 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) {
 		}
 		switch typeOfDataToShow {
 		case "1":
-			//showLoginPassItem(client, cmd, qh, response, indexes[inputIDInt])
 			clientApp.ShowLoginPass(response, indexes[inputIDInt])
 			break
 		case "2":
-			//showBankCardItem(client, cmd, qh, response, indexes[inputIDInt])
 			clientApp.ShowBankCard(response, indexes[inputIDInt])
 			break
 		default:
@@ -81,4 +84,5 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) {
 			break
 		}
 	}
+	return nil
 }

@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"github.com/DrSmithFr/go-console/question"
 	"net/http"
+	url2 "net/url"
 )
 
-func (clientApp *ClientApp) Register() {
+func (clientApp *ClientApp) Register() error {
 	inputLogin := clientApp.Qh.Ask(
 		question.
 			NewQuestion(
@@ -28,8 +29,11 @@ func (clientApp *ClientApp) Register() {
 	registerRequestStr += `,"}`
 
 	var registerRequest = []byte(registerRequestStr)
-	//url:= url2.JoinPath("")
-	request, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/user/register", bytes.NewBuffer(registerRequest))
+	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/register")
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(registerRequest))
 
 	if err != nil {
 		fmt.Println("Ошибка формирования запроса, обратитесь к администратору")
@@ -55,4 +59,5 @@ func (clientApp *ClientApp) Register() {
 		fmt.Println("Внутренняя ошибка сервера, попробуйте еще раз..")
 		clientApp.Register()
 	}
+	return nil
 }

@@ -7,9 +7,10 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/myauth"
 	"github.com/golang-jwt/jwt/v4"
 	"net/http"
+	url2 "net/url"
 )
 
-func (clientApp *ClientApp) Login(response *http.Response) {
+func (clientApp *ClientApp) Login(response *http.Response) error {
 	// авторизован ли пользователь и если да, то под каким именем, приветствуем его и показываем меню
 	if response != nil {
 		for _, v := range response.Cookies() {
@@ -25,12 +26,11 @@ func (clientApp *ClientApp) Login(response *http.Response) {
 					fmt.Println("Ошибка авторизации, обратитесь к администратору")
 				}
 				fmt.Printf("Добро пожаловать в gophkeeper, %s!\n", claims.UserLogin)
-				//showAuthMenu(client, cmd, qh, response)
 				clientApp.ShowAuthMenu(response)
 				continue
 			}
 		}
-		return
+		return nil
 	}
 	inputLogin := clientApp.Qh.Ask(
 		question.
@@ -47,7 +47,11 @@ func (clientApp *ClientApp) Login(response *http.Response) {
 	loginRequestStr += `,"}`
 
 	var loginRequest = []byte(loginRequestStr)
-	request, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/user/login", bytes.NewBuffer(loginRequest))
+	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/login")
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(loginRequest))
 	if err != nil {
 		fmt.Println("Ошибка, попробуйте обновить версию клиента")
 	}
@@ -57,23 +61,19 @@ func (clientApp *ClientApp) Login(response *http.Response) {
 	if err != nil {
 		fmt.Println("Ошибка получения ответа, попробуйте обновить версию клиента")
 	}
-
 	if response.StatusCode == http.StatusOK {
 		fmt.Println("Вы удачно авторизовались")
-		//login(client, cmd, qh, response)
 		clientApp.Login(response)
 	}
 	if response.StatusCode == http.StatusUnauthorized {
 		fmt.Println("Пользователь с такими логином и паролем не зарегистрирован")
-		//main()
 	}
 	if response.StatusCode == http.StatusBadRequest {
 		fmt.Println("Ошибка клиента, попробуйте обновить версию")
-		//main()
 	}
 	if response.StatusCode == http.StatusInternalServerError {
 		fmt.Println("Внутренняя ошибка сервера, попробуйте еще раз..")
-		//login(client, cmd, qh, nil)
 		clientApp.Login(nil)
 	}
+	return nil
 }

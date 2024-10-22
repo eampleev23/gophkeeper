@@ -9,6 +9,7 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"io"
 	"net/http"
+	url2 "net/url"
 	"strings"
 )
 
@@ -21,7 +22,11 @@ func (clientApp *ClientApp) ShowBankCard(response *http.Response, inputID string
 	bankCardRequestStr += `}`
 
 	var bankCardRequest = []byte(bankCardRequestStr)
-	request, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/user/get-bank-card", bytes.NewBuffer(bankCardRequest))
+	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/get-bank-card")
+	if err != nil {
+		return err
+	}
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bankCardRequest))
 	if err != nil {
 		fmt.Println("Ошибка формирования запроса, попробуйте обновить приложение")
 	}

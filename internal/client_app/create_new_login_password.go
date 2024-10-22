@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/DrSmithFr/go-console/question"
 	"net/http"
+	url2 "net/url"
 )
 
 func (clientApp *ClientApp) CreateNewLoginPassword(response *http.Response) error {
@@ -35,7 +36,12 @@ func (clientApp *ClientApp) CreateNewLoginPassword(response *http.Response) erro
 
 	var loginPassNewItemRequestBytes = []byte(loginPassNewItemRequestStr)
 
-	request, err := http.NewRequest(http.MethodPost, "http://localhost:8080/api/user/add-login-password", bytes.NewBuffer(loginPassNewItemRequestBytes))
+	url, err := url2.JoinPath(clientApp.RunAddr, "api/user/add-login-password")
+	if err != nil {
+		return err
+	}
+
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(loginPassNewItemRequestBytes))
 	if err != nil {
 		fmt.Println("Ошибка, попробуйте обновить версию клиента")
 	}
@@ -46,7 +52,6 @@ func (clientApp *ClientApp) CreateNewLoginPassword(response *http.Response) erro
 	}
 	if response.StatusCode == http.StatusOK {
 		fmt.Printf("Вы удачно добавили пару логин-пароль под названием %s \n", metaValue)
-		//showAuthMenu(client, cmd, qh, response)
 		clientApp.ShowAuthMenu(response)
 	}
 	if response.StatusCode != http.StatusBadRequest {
@@ -57,7 +62,6 @@ func (clientApp *ClientApp) CreateNewLoginPassword(response *http.Response) erro
 	}
 	if response.StatusCode != http.StatusUnauthorized {
 		fmt.Println("Необходимо авторизоваться")
-		//login(client, cmd, qh, response)
 		clientApp.Login(response)
 	}
 	return nil
