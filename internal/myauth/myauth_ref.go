@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/mlg"
-	"github.com/eampleev23/gophkeeper/internal/server_app"
+	"github.com/eampleev23/gophkeeper/internal/server_config"
 	"github.com/golang-jwt/jwt/v4"
 	"go.uber.org/zap"
 	"log"
@@ -14,13 +14,13 @@ import (
 
 type Authorizer struct {
 	l *mlg.ZapLog
-	c *server_app.Config
+	c *server_config.Config
 }
 
 var keyLogger mlg.Key = mlg.KeyLoggerCtx
 
 // Initialize инициализирует синглтон авторизовывальщика с секретным ключом.
-func Initialize(c *server_app.Config, l *mlg.ZapLog) (*Authorizer, error) {
+func Initialize(c *server_config.Config, l *mlg.ZapLog) (*Authorizer, error) {
 	au := &Authorizer{
 		c: c,
 		l: l,
@@ -97,7 +97,7 @@ func (au *Authorizer) GetUserID(tokenString string) (int, error) {
 	})
 	if err != nil {
 		au.l.ZL.Info("Failed in case to get ownerId from token ", zap.Error(err))
+		return 0, err
 	}
-
 	return claims.UserID, nil
 }

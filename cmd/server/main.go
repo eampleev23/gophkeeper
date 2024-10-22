@@ -5,7 +5,7 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/handlers"
 	"github.com/eampleev23/gophkeeper/internal/mlg"
 	"github.com/eampleev23/gophkeeper/internal/myauth"
-	"github.com/eampleev23/gophkeeper/internal/server_app"
+	"github.com/eampleev23/gophkeeper/internal/server_config"
 	"github.com/eampleev23/gophkeeper/internal/services"
 	"github.com/eampleev23/gophkeeper/internal/store"
 	"github.com/go-chi/chi/v5"
@@ -35,7 +35,7 @@ func main() {
 }
 
 func run() error {
-	c, err := server_app.NewConfig()
+	c, err := server_config.NewConfig()
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new config: %w", err)
 	}

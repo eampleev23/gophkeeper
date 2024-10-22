@@ -1,4 +1,4 @@
-package client_app
+package client
 
 import (
 	"github.com/DrSmithFr/go-console/question"

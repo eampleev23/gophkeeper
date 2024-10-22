@@ -1,4 +1,4 @@
-package server_app
+package server_config
 
 import (
 	"flag"

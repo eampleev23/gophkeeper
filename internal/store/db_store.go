@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/mlg"
-	"github.com/eampleev23/gophkeeper/internal/server_app"
+	"github.com/eampleev23/gophkeeper/internal/server_config"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -14,7 +14,7 @@ import (
 
 type DBStore struct {
 	dbConn *sql.DB
-	c      *server_app.Config
+	c      *server_config.Config
 	l      *mlg.ZapLog
 }
 
@@ -25,7 +25,7 @@ func (d DBStore) DBConnClose() (err error) {
 	return nil
 }
 
-func NewDBStore(c *server_app.Config, l *mlg.ZapLog) (*DBStore, error) {
+func NewDBStore(c *server_config.Config, l *mlg.ZapLog) (*DBStore, error) {
 	db, err := sql.Open("pgx", c.DBDSN)
 	if err != nil {
 		return &DBStore{}, fmt.Errorf("%w", errors.New("sql.open failed in case to create store"))

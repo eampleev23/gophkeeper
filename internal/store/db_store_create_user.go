@@ -9,11 +9,13 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// cost - сложность хэша (чем сложнее, тем дольше хэширование и сравнение, но пи этом более надежное)
+const cost = 14
+
 // InsertUser занимается непосредственно запросом вставки строки в бд.
 func (d DBStore) InsertUser(ctx context.Context, userRegReq models.UserRegReq) (newUser models.User, err error) {
 	newUser = models.User{}
 	bytesPassword := []byte(userRegReq.Password)
-	cost := 14
 	hashedPassword, err := bcrypt.GenerateFromPassword(bytesPassword, cost)
 	if err != nil {
 		return newUser, err

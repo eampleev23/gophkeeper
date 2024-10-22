@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/DrSmithFr/go-console/question"
-	"github.com/eampleev23/gophkeeper/internal/client_app"
+	"github.com/eampleev23/gophkeeper/internal/client"
 	"log"
 )
 
@@ -16,7 +16,7 @@ func main() {
 }
 
 func run() error {
-	app, err := client_app.NewApp()
+	app, err := client.NewApp()
 	if err != nil {
 		return fmt.Errorf("failed to initialize a new config: %w", err)
 	}
