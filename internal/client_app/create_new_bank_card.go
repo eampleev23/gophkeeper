@@ -57,25 +57,31 @@ func (clientApp *ClientApp) CreateNewBankCard(response *http.Response) error {
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(bankCardNewItemRequestBytes))
 	if err != nil {
 		fmt.Println("Ошибка, попробуйте обновить версию клиента")
+		return err
 	}
 	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
 	response, err = clientApp.HttpClient.Do(request)
 	if err != nil {
 		fmt.Println("Ошибка получения ответа от сервера, попробуйте обновить версию клиента")
+		return err
 	}
 	if response.StatusCode == http.StatusOK {
 		fmt.Printf("Вы удачно добавили данные банковской карты под названием %s \n", inputMetaValue)
 		clientApp.ShowAuthMenu(response)
+		return nil
 	}
 	if response.StatusCode != http.StatusBadRequest {
 		fmt.Println("Ошибка получения ответа от сервера, попробуйте обновить версию клиента")
+		return err
 	}
 	if response.StatusCode != http.StatusInternalServerError {
 		fmt.Println("Ошибка получения ответа от сервера, попробуйте обновить версию клиента")
+		return err
 	}
 	if response.StatusCode != http.StatusUnauthorized {
 		fmt.Println("Необходимо авторизоваться")
 		clientApp.Login(response)
+		return err
 	}
-	return nil
+	return err
 }

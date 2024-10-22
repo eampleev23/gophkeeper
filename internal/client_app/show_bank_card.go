@@ -49,7 +49,6 @@ func (clientApp *ClientApp) ShowBankCard(response *http.Response, inputID string
 		fmt.Printf("Номер карты: %s, Срок годности: %s\n", unPackedCardNumber, unPackedValidThru)
 		fmt.Printf("Имя владельца: %s, Код CVC: %s\n", unPackedOwnerName, unPackedCVC)
 	}
-	//showDataItems(client, cmd, qh, nil)
 	clientApp.ShowDataItems(nil)
 	return nil
 }

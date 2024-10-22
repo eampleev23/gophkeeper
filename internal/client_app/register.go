@@ -42,22 +42,27 @@ func (clientApp *ClientApp) Register() error {
 	response, err := clientApp.HttpClient.Do(request)
 	if err != nil {
 		fmt.Println("Ошибка получения ответа, обратитесь к администратору")
+		return err
 	}
 	if response.StatusCode == http.StatusOK {
 		fmt.Println("Вы удачно зарегистрировались и авторизовались")
 		clientApp.Login(response)
+		return nil
 	}
 	if response.StatusCode == http.StatusConflict {
 		fmt.Println("Пользователь с таким логином уже зарегистрирован.")
 		clientApp.Register()
+		return err
 	}
 	if response.StatusCode == http.StatusBadRequest {
 		fmt.Println("Ошибка клиента, попробуйте обновить версию")
 		clientApp.Register()
+		return err
 	}
 	if response.StatusCode == http.StatusInternalServerError {
 		fmt.Println("Внутренняя ошибка сервера, попробуйте еще раз..")
 		clientApp.Register()
+		return err
 	}
-	return nil
+	return err
 }

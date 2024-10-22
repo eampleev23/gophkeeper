@@ -17,22 +17,18 @@ func (clientApp *ClientApp) ShowAuthMenu(response *http.Response) {
 	switch secondMenuItem {
 	case "l":
 		// собираем данные для новой пары логин-пароль
-		//createNewLoginPasswordItem(client, cmd, qh, response)
 		clientApp.CreateNewLoginPassword(response)
 		break
 	case "c":
 		// собираем данные для новой банковской карты
-		//createNewBankCardItem(client, cmd, qh, response)
 		clientApp.CreateNewBankCard(response)
 		break
 	case "q":
 		// разавторизуем пользователя и отправляем на приветственный экран
-		//logout(client, cmd, qh, response)
 		clientApp.Logout(response)
 		break
 	case "s":
 		// показываем все сохраненные данные пользователя
-		//showDataItems(client, cmd, qh, response)
 		clientApp.ShowDataItems(response)
 		break
 	}

@@ -60,20 +60,25 @@ func (clientApp *ClientApp) Login(response *http.Response) error {
 	response, err = clientApp.HttpClient.Do(request)
 	if err != nil {
 		fmt.Println("Ошибка получения ответа, попробуйте обновить версию клиента")
+		return err
 	}
 	if response.StatusCode == http.StatusOK {
 		fmt.Println("Вы удачно авторизовались")
 		clientApp.Login(response)
+		return nil
 	}
 	if response.StatusCode == http.StatusUnauthorized {
 		fmt.Println("Пользователь с такими логином и паролем не зарегистрирован")
+		return err
 	}
 	if response.StatusCode == http.StatusBadRequest {
 		fmt.Println("Ошибка клиента, попробуйте обновить версию")
+		return err
 	}
 	if response.StatusCode == http.StatusInternalServerError {
 		fmt.Println("Внутренняя ошибка сервера, попробуйте еще раз..")
 		clientApp.Login(nil)
+		return err
 	}
-	return nil
+	return err
 }

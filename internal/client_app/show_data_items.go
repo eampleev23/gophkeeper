@@ -21,16 +21,19 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		fmt.Println("Ошибка формирования запроса, обратитесь к администратору")
+		return err
 	}
 	response, err = clientApp.HttpClient.Do(request)
 	if err != nil {
 		fmt.Println("Ошибка получения ответа, обратитесь к администратору")
+		return err
 	}
 	if response.StatusCode == http.StatusOK {
 		responseData, err := io.ReadAll(response.Body)
 		err = json.Unmarshal(responseData, &dataItems)
 		if err != nil {
 			fmt.Println("ошибка:", err)
+			return err
 		}
 
 		var indexes = make(map[int]string)
@@ -63,6 +66,7 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 		inputIDInt, err := strconv.Atoi(inputID)
 		if err != nil {
 			fmt.Println("Ошибка клиента, попробуйте обновить версию")
+			return err
 		}
 		// определяем какого типа зашифрованное значение хочет посмотреть пользователь (логин пароль или банковская карта и тд)
 		var typeOfDataToShow string
@@ -81,8 +85,8 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 			break
 		default:
 			fmt.Println("Ошибка клиента, попробуйте обновить версию")
-			break
+			return err
 		}
 	}
-	return nil
+	return err
 }

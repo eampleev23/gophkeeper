@@ -8,7 +8,6 @@ func (clientApp *ClientApp) Logout(response *http.Response) {
 			if v.Name == "token" {
 				v.Name = "old"
 				v.Value = "old"
-				//main()
 				continue
 			}
 		}

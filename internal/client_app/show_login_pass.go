@@ -34,6 +34,7 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 	response, err = clientApp.HttpClient.Do(request)
 	if err != nil {
 		fmt.Println("Ошибка получения ответа, обратитесь к администратору")
+		return err
 	}
 	if response.StatusCode == http.StatusOK {
 		responseData, err := io.ReadAll(response.Body)
@@ -48,7 +49,7 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 	unPackedPassword := unpackPassword(logiPasswordItem)
 	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedPassword)
 	clientApp.ShowDataItems(nil)
-	return nil
+	return err
 }
 
 func unpackLogin(inputLoginPassModel models.LoginPassword) (unpackedLogin string) {
