@@ -9,6 +9,8 @@ import (
 	"go.uber.org/zap"
 )
 
+const typeBankCard = 2
+
 func (d DBStore) InsertBankCard(ctx context.Context, inputModel models.BankCard) (outputModel models.BankCard, err error) {
 	d.l.ZL.Debug("Зашли в InsertBankCard в DBStore..")
 	d.l.ZL.Debug("", zap.Any("inputModel", inputModel))
@@ -23,17 +25,16 @@ func (d DBStore) InsertBankCard(ctx context.Context, inputModel models.BankCard)
 	VALUES($1, $2, $3)
 	RETURNING
 	    id, owner_id, meta_value`,
-		2, inputModel.OwnerID, inputModel.MetaValue).Scan(
+		typeBankCard, inputModel.OwnerID, inputModel.MetaValue).Scan(
 		&outputModel.ID,
 		&outputModel.OwnerID,
 		&outputModel.MetaValue)
 
 	// Шифруем данные карты
-	key := []byte("TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD")
 	// NewCipher создает и возвращает новый cipher.Block.
 	// Ключевым аргументом должен быть ключ AES, 16, 24 или 32 байта
 	// для выбора AES-128, AES-192 или AES-256.
-	aesblock, err := aes.NewCipher(key)
+	aesblock, err := aes.NewCipher([]byte(d.c.SecretKeyForData))
 	if err != nil {
 		fmt.Printf("error: %v\n", err)
 		return

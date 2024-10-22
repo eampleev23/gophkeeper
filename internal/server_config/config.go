@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	RunAddr   string
-	LogLevel  string
-	DBDSN     string
-	SecretKey string
-	TokenExp  time.Duration
+	RunAddr          string
+	LogLevel         string
+	DBDSN            string
+	SecretKey        string
+	TokenExp         time.Duration
+	SecretKeyForData string
 }
 
 func NewConfig() (*Config, error) {
@@ -31,6 +32,8 @@ func (c *Config) SetValues() {
 	flag.StringVar(&c.DBDSN, "d", "postgresql://gophkeeper:gophkeeper@localhost:5432/gophkeeper?sslmode=disable", "postgres database")
 	// принимаем секретный ключ сервера для авторизации
 	flag.StringVar(&c.SecretKey, "s", "e4853f5c4810101e88f1898db21c15d3", "server's secret key for authorization")
+	// принимаем секретный ключ сервера для авторизации
+	flag.StringVar(&c.SecretKeyForData, "sd", "TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD", "secret key for data encrypting")
 
 	if envRunAddr := os.Getenv("RUN_ADDRESS"); envRunAddr != "" {
 		c.RunAddr = envRunAddr
@@ -43,5 +46,8 @@ func (c *Config) SetValues() {
 	}
 	if envSecretKey := os.Getenv("SECRET_KEY"); envSecretKey != "" {
 		c.SecretKey = envSecretKey
+	}
+	if envSecretKeyForData := os.Getenv("SECRET_KEY_FOR_DATA"); envSecretKeyForData != "" {
+		c.SecretKeyForData = envSecretKeyForData
 	}
 }
