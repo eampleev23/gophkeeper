@@ -29,10 +29,10 @@ func (clientApp *ClientApp) ShowBankCard(response *http.Response, inputID string
 		return err
 	}
 
-	unPackedCardNumber := unpackData(bankCardItem.CardNumber, bankCardItem.NonceCardNumber)
-	unPackedValidThru := unpackData(bankCardItem.ValidThru, bankCardItem.NonceValidThru)
-	unPackedOwnerName := unpackData(bankCardItem.OwnerName, bankCardItem.NonceOwnerName)
-	unPackedCVC := unpackData(bankCardItem.CVC, bankCardItem.NonceCVC)
+	unPackedCardNumber := UnpackData(bankCardItem.CardNumber, bankCardItem.NonceCardNumber)
+	unPackedValidThru := UnpackData(bankCardItem.ValidThru, bankCardItem.NonceValidThru)
+	unPackedOwnerName := UnpackData(bankCardItem.OwnerName, bankCardItem.NonceOwnerName)
+	unPackedCVC := UnpackData(bankCardItem.CVC, bankCardItem.NonceCVC)
 	unPackedCVC = strings.TrimSuffix(unPackedCVC, ",")
 	fmt.Printf("\nНомер карты: %s, Срок годности: %s,\n", unPackedCardNumber, unPackedValidThru)
 	fmt.Printf("Имя владельца: %s, Код CVC: %s.\n\n", unPackedOwnerName, unPackedCVC)

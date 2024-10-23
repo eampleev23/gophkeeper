@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"fmt"
+	"github.com/eampleev23/gophkeeper/internal/client"
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"go.uber.org/zap"
 )
@@ -59,6 +60,10 @@ func (d DBStore) InsertTextDataItem(ctx context.Context, inputModel models.TextD
 	encryptedTextContentStr := packBytesToString(encryptedTextContent)
 	// также переводим в строку вектор инициализации
 	nonceTextContentStr := packBytesToString(nonceTextContent)
+
+	unpackTxtStr := client.UnpackData(encryptedTextContentStr, nonceTextContentStr)
+	fmt.Println("unpackTxtStr=", unpackTxtStr)
+	fmt.Println("string(unpackTxtStr)=", string(unpackTxtStr))
 
 	tx.QueryRow( // нужен скан
 		`INSERT INTO

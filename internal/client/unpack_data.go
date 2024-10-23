@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func unpackData(packedStr, nonceStr string) (unpackedStr string) {
+func UnpackData(packedStr, nonceStr string) (unpackedStr string) {
 	encryptedStrBytes := convertMineToBytes(packedStr)
 	encryptedNonceBytes := convertMineToBytes(nonceStr)
 	key := []byte("TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD")

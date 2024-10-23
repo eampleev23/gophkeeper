@@ -33,6 +33,9 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 		case 2:
 			fmt.Printf("[банковская карта]")
 			break
+		case 3:
+			fmt.Printf("[текст]")
+			break
 		default:
 			fmt.Printf("[не известное значение, обновите клиент]")
 		}
@@ -73,6 +76,9 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 		break
 	case "2":
 		clientApp.ShowBankCard(response, indexes[inputIDInt])
+		break
+	case "3":
+		clientApp.ShowText(response, indexes[inputIDInt])
 		break
 	default:
 		fmt.Println("Ошибка клиента, попробуйте обновить версию")
