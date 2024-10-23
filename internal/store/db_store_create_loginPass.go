@@ -71,10 +71,9 @@ func (d DBStore) InsertLoginPassword(ctx context.Context, inputModel models.Logi
 	// таким образом encryptedLoginStr будет в виде строки с разделителем например !
 
 	// шифруем зашифрованные логин и пароль в строку
-	//encryptedLoginStr := byteToString(encryptedLogin)
-	encryptedPasswordStr := byteToString(encryptedPassword)
-	nonceLoginStr := byteToString(nonceLogin)
-	noncePasswordStr := byteToString(noncePassword)
+	encryptedPasswordStr := packBytesToString(encryptedPassword)
+	nonceLoginStr := packBytesToString(nonceLogin)
+	noncePasswordStr := packBytesToString(noncePassword)
 
 	var loginBytes []byte
 
@@ -91,6 +90,5 @@ func (d DBStore) InsertLoginPassword(ctx context.Context, inputModel models.Logi
 		&outputModel.NonceLogin,
 		&outputModel.NoncePassword)
 	tx.Commit()
-	fmt.Println("loginBytes=", loginBytes)
 	return outputModel, err
 }

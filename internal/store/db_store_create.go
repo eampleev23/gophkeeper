@@ -20,7 +20,7 @@ func generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
-func byteToString(b []byte) string {
+func packBytesToString(b []byte) string {
 	var result string
 	for i := 0; i < len(b); i++ {
 		intVal := int(b[i])

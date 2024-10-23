@@ -83,16 +83,16 @@ func (d DBStore) InsertBankCard(ctx context.Context, inputModel models.BankCard)
 	encryptedCVC := aesgcm.Seal(nil, nonceCVC, notEncryptedCVC, nil)
 
 	// шифруем зашифрованные данные карты в строки для хранения в бд
-	encryptedCardNumberStr := byteToString(encryptedCardNumber)
-	encryptedValidThruStr := byteToString(encryptedValidThru)
-	encryptedOwnerNameStr := byteToString(encryptedOwnerName)
-	encryptedCVCStr := byteToString(encryptedCVC)
+	encryptedCardNumberStr := packBytesToString(encryptedCardNumber)
+	encryptedValidThruStr := packBytesToString(encryptedValidThru)
+	encryptedOwnerNameStr := packBytesToString(encryptedOwnerName)
+	encryptedCVCStr := packBytesToString(encryptedCVC)
 
 	// также переводим в строки вектора инициализации
-	nonceCardNumberStr := byteToString(nonceCardNumber)
-	nonceValidThruStr := byteToString(nonceValidThru)
-	nonceOwnerNameStr := byteToString(nonceOwnerName)
-	nonceCVCStr := byteToString(nonceCVC)
+	nonceCardNumberStr := packBytesToString(nonceCardNumber)
+	nonceValidThruStr := packBytesToString(nonceValidThru)
+	nonceOwnerNameStr := packBytesToString(nonceOwnerName)
+	nonceCVCStr := packBytesToString(nonceCVC)
 
 	tx.QueryRow( // нужен скан
 		`INSERT INTO
