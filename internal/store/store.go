@@ -21,6 +21,8 @@ type Store interface {
 	InsertLoginPassword(ctx context.Context, inputModel models.LoginPassword) (outputModel models.LoginPassword, err error)
 	// InsertBankCard - метод для добавления банковской карты.
 	InsertBankCard(ctx context.Context, inputModel models.BankCard) (outputModel models.BankCard, err error)
+	// InsertTextDataItem - метод для добавления произвольных текстовых данных.
+	InsertTextDataItem(ctx context.Context, inputModel models.TextDataItem) (outputModel models.TextDataItem, err error)
 	// GetDataItemsByUserID возвращает все сохраненные пароли пользователя
 	GetDataItemsByUserID(ctx context.Context, userID int) (dataItems []models.DataItem, err error)
 	// GetLoginPassItemByID возвращает конкретную пару логин-пароль
