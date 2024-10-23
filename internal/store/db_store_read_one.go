@@ -76,3 +76,21 @@ func (d DBStore) GetLoginPassItemByID(
 	loginPassOutput.Login = packBytesToString(loginBytes)
 	return loginPassOutput, nil
 }
+
+func (d DBStore) GetTextDataItemByID(
+	ctx context.Context,
+	userID, inputID int) (
+	textDataItemOutput models.TextDataItem,
+	err error) {
+	d.l.ZL.Info("GetTextDataItemByID db method is called..")
+	row := d.dbConn.QueryRowContext(ctx,
+		`SELECT item_id, text_content, nonce_text_content FROM text_items WHERE item_id = $1 LIMIT 1`,
+		inputID,
+	)
+	err = row.Scan(&textDataItemOutput.ID, &textDataItemOutput.TextContent,
+		&textDataItemOutput.NonceTextContent) // Разбираем результат
+	if err != nil {
+		return textDataItemOutput, fmt.Errorf("faild to get login-pass couple by this id %w", err)
+	}
+	return textDataItemOutput, nil
+}
