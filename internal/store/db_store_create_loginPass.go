@@ -64,29 +64,33 @@ func (d DBStore) InsertLoginPassword(ctx context.Context, inputModel models.Logi
 
 	// шифруем логин и пароль
 	encryptedLogin := aesgcm.Seal(nil, nonceLogin, notEncryptedLogin, nil)
+	fmt.Println("encryptedLogin=", encryptedLogin)
 	encryptedPassword := aesgcm.Seal(nil, noncePassword, notEncryptedPassword, nil)
 
 	// Видимо нужно парсить каждый байт в строку и эту строку сохранять в бд, как вам идея? ))
 	// таким образом encryptedLoginStr будет в виде строки с разделителем например !
 
 	// шифруем зашифрованные логин и пароль в строку
-	encryptedLoginStr := byteToString(encryptedLogin)
+	//encryptedLoginStr := byteToString(encryptedLogin)
 	encryptedPasswordStr := byteToString(encryptedPassword)
 	nonceLoginStr := byteToString(nonceLogin)
 	noncePasswordStr := byteToString(noncePassword)
 
+	var loginBytes []byte
+
 	tx.QueryRow( // нужен скан
 		`INSERT INTO
-	login_password_items (item_id, hash_login, hash_password, nonce_login, nonce_password)
+	login_password_items (item_id, login, hash_password, nonce_login, nonce_password)
 	VALUES($1, $2, $3, $4, $5)
 	RETURNING
-	   item_id, hash_login, hash_password, nonce_login, nonce_password`,
-		outputModel.ID, encryptedLoginStr, encryptedPasswordStr, nonceLoginStr, noncePasswordStr).Scan(
+	   item_id, login, hash_password, nonce_login, nonce_password`,
+		outputModel.ID, encryptedLogin, encryptedPasswordStr, nonceLoginStr, noncePasswordStr).Scan(
 		&outputModel.ID,
-		&outputModel.Login,
+		&loginBytes,
 		&outputModel.Password,
 		&outputModel.NonceLogin,
 		&outputModel.NoncePassword)
 	tx.Commit()
+	fmt.Println("loginBytes=", loginBytes)
 	return outputModel, err
 }

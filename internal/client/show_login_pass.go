@@ -29,6 +29,8 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 
 	err = json.Unmarshal(responseData, &logiPasswordItem)
 
+	fmt.Println("logiPasswordItem.Login=", logiPasswordItem.Login)
+
 	unPackedLogin := unpackLogin(logiPasswordItem)
 	unPackedPassword := unpackPassword(logiPasswordItem)
 	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedPassword)
@@ -62,12 +64,12 @@ func unpackLogin(inputLoginPassModel models.LoginPassword) (unpackedLogin string
 		fmt.Printf("error: %v\n", err)
 		return
 	}
+
 	unpackedLoginBytes, err := aesgcm.Open(nil, encryptedNonceLoginBytes, encryptedLoginBytes, nil) // расшифровываем
 	if err != nil {
 		fmt.Println("Ошибка клиента, попробуйте обновить версию")
 		return
 	}
-	// логин расшифровали корректно, ура!
 	unpackedLogin = string(unpackedLoginBytes)
 	return unpackedLogin
 }
