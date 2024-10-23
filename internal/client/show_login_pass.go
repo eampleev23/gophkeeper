@@ -1,8 +1,6 @@
 package client
 
 import (
-	"crypto/aes"
-	"crypto/cipher"
 	"encoding/json"
 	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
@@ -11,7 +9,7 @@ import (
 	"strings"
 )
 
-var logiPasswordItem models.LoginPassword
+var loginPasswordItem models.LoginPassword
 
 func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID string) error {
 
@@ -27,87 +25,15 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 		return err
 	}
 
-	err = json.Unmarshal(responseData, &logiPasswordItem)
+	err = json.Unmarshal(responseData, &loginPasswordItem)
 
-	fmt.Println("logiPasswordItem.Login=", logiPasswordItem.Login)
-
-	unPackedLogin := unpackLogin(logiPasswordItem)
-	unPackedPassword := unpackPassword(logiPasswordItem)
+	unPackedLogin := unpackData(loginPasswordItem.Login, loginPasswordItem.NonceLogin)
+	unPackedPassword := unpackData(loginPasswordItem.Password, loginPasswordItem.NoncePassword)
+	unPackedPassword = strings.TrimSuffix(unPackedPassword, ",")
 	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedPassword)
 
 	clientApp.ShowDataItems(nil)
 	return err
-}
-
-func unpackLogin(inputLoginPassModel models.LoginPassword) (unpackedLogin string) {
-	// все пришло в нормальном виде, теперь надо конвертнуть в байты
-	encryptedLoginBytes := convertMineToBytes(inputLoginPassModel.Login)
-
-	// теперь нужно получить байты из nonceLogin
-	encryptedNonceLoginBytes := convertMineToBytes(inputLoginPassModel.NonceLogin)
-
-	// теперь вроде бы есть все необходимое для расшифровки
-	// расшифровываем
-	key := []byte("TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD")
-
-	// NewCipher создает и возвращает новый cipher.Block.
-	// Ключевым аргументом должен быть ключ AES, 16, 24 или 32 байта
-	// для выбора AES-128, AES-192 или AES-256.
-	aesblock, err := aes.NewCipher(key)
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
-		return
-	}
-	// NewGCM возвращает заданный 128-битный блочный шифр
-	aesgcm, err := cipher.NewGCM(aesblock)
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
-		return
-	}
-
-	unpackedLoginBytes, err := aesgcm.Open(nil, encryptedNonceLoginBytes, encryptedLoginBytes, nil) // расшифровываем
-	if err != nil {
-		fmt.Println("Ошибка клиента, попробуйте обновить версию")
-		return
-	}
-	unpackedLogin = string(unpackedLoginBytes)
-	return unpackedLogin
-}
-
-func unpackPassword(inputLoginPassModel models.LoginPassword) (unpackedPassword string) {
-	// все пришло в нормальном виде, теперь надо конвертнуть в байты
-	encryptedPasswordBytes := convertMineToBytes(inputLoginPassModel.Password)
-
-	// теперь нужно получить байты из noncePassword
-	encryptedNoncePasswordBytes := convertMineToBytes(inputLoginPassModel.NoncePassword)
-
-	// теперь вроде бы есть все необходимое для расшифровки
-	// расшифровываем
-	key := []byte("TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD")
-
-	// NewCipher создает и возвращает новый cipher.Block.
-	// Ключевым аргументом должен быть ключ AES, 16, 24 или 32 байта
-	// для выбора AES-128, AES-192 или AES-256.
-	aesblock, err := aes.NewCipher(key)
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
-		return
-	}
-	// NewGCM возвращает заданный 128-битный блочный шифр
-	aesgcm, err := cipher.NewGCM(aesblock)
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
-		return
-	}
-	unpackedPasswordBytes, err := aesgcm.Open(nil, encryptedNoncePasswordBytes, encryptedPasswordBytes, nil) // расшифровываем
-	if err != nil {
-		fmt.Println("Ошибка клиента, попробуйте обновить версию")
-		return
-	}
-	// логин расшифровали корректно, ура!
-	unpackedPassword = string(unpackedPasswordBytes)
-	unpackedPassword = strings.TrimSuffix(unpackedPassword, ",")
-	return unpackedPassword
 }
 
 func convertMineToBytes(mineStr string) []byte {
