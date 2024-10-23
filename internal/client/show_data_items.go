@@ -55,6 +55,11 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 		return err
 	}
 	// определяем какого типа зашифрованное значение хочет посмотреть пользователь (логин пароль или банковская карта и тд)
+	if inputIDInt == 0 {
+		// возврат на предыдущее меню
+		clientApp.ShowAuthMenu(response)
+		return nil
+	}
 	var typeOfDataToShow string
 	for _, dataItem := range dataItems {
 		dataItemIdInt := strconv.Itoa(dataItem.ID)

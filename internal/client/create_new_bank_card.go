@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"github.com/DrSmithFr/go-console/question"
+	"github.com/icza/gox/stringsx"
 	"net/http"
 )
 
@@ -33,6 +34,12 @@ func (clientApp *ClientApp) CreateNewBankCard(response *http.Response) error {
 			NewQuestion(
 				`Введите CVC-код карты с обратной стороны (например, "766"): `),
 	)
+
+	inputCardNumber = stringsx.Clean(inputCardNumber)
+	inputValidThru = stringsx.Clean(inputValidThru)
+	inputOwnerName = stringsx.Clean(inputOwnerName)
+	inputCVC = stringsx.Clean(inputCVC)
+
 	var bankCardNewItemRequestStr = `{"meta-value": "`
 	bankCardNewItemRequestStr += inputMetaValue
 	bankCardNewItemRequestStr += `", "card-number": "`

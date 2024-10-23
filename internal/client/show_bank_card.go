@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"net/http"
+	"strings"
 )
 
 var bankCardItem models.BankCard
@@ -32,8 +33,9 @@ func (clientApp *ClientApp) ShowBankCard(response *http.Response, inputID string
 	unPackedValidThru := unpackData(bankCardItem.ValidThru, bankCardItem.NonceValidThru)
 	unPackedOwnerName := unpackData(bankCardItem.OwnerName, bankCardItem.NonceOwnerName)
 	unPackedCVC := unpackData(bankCardItem.CVC, bankCardItem.NonceCVC)
-	fmt.Printf("Номер карты: %s, Срок годности: %s\n", unPackedCardNumber, unPackedValidThru)
-	fmt.Printf("Имя владельца: %s, Код CVC: %s\n", unPackedOwnerName, unPackedCVC)
+	unPackedCVC = strings.TrimSuffix(unPackedCVC, ",")
+	fmt.Printf("\nНомер карты: %s, Срок годности: %s,\n", unPackedCardNumber, unPackedValidThru)
+	fmt.Printf("Имя владельца: %s, Код CVC: %s.\n\n", unPackedOwnerName, unPackedCVC)
 
 	clientApp.ShowDataItems(nil)
 	return nil

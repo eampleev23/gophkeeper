@@ -30,7 +30,7 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 	unPackedLogin := unpackData(loginPasswordItem.Login, loginPasswordItem.NonceLogin)
 	unPackedPassword := unpackData(loginPasswordItem.Password, loginPasswordItem.NoncePassword)
 	unPackedPassword = strings.TrimSuffix(unPackedPassword, ",")
-	fmt.Printf("Запрашиваемые логин и пароль: %s::%s\n", unPackedLogin, unPackedPassword)
+	fmt.Printf("\nЗапрашиваемые логин и пароль: %s::%s\n\n", unPackedLogin, unPackedPassword)
 
 	clientApp.ShowDataItems(nil)
 	return err

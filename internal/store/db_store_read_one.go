@@ -73,7 +73,6 @@ func (d DBStore) GetLoginPassItemByID(
 	if err != nil {
 		return loginPassOutput, fmt.Errorf("faild to get login-pass couple by this id %w", err)
 	}
-	//loginPassOutput.Login = string(loginBytes)
 	loginPassOutput.Login = byteToString(loginBytes)
 	return loginPassOutput, nil
 }
