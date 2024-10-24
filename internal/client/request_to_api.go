@@ -2,7 +2,6 @@ package client
 
 import (
 	"bytes"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -37,5 +36,5 @@ func (clientApp *ClientApp) RequestToApi(jsonData []byte, handler string, method
 		}
 		return responseData, response, nil
 	}
-	return nil, response, errors.New(string(response.StatusCode))
+	return nil, response, nil
 }
