@@ -5,13 +5,13 @@ go 1.23.0
 require (
 	github.com/DrSmithFr/go-console v0.0.0-20240213203601-0efc7b6b93db
 	github.com/go-chi/chi/v5 v5.1.0
-	github.com/go-resty/resty/v2 v2.15.3
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/icza/gox v0.2.0
 	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
 	github.com/jackc/pgx/v5 v5.5.1
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
+	go.uber.org/mock v0.5.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.25.0
 )

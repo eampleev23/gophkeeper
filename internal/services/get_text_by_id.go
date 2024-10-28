@@ -6,7 +6,7 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/models"
 )
 
-func (s *Services) GetTextDataItemByID(ctx context.Context, userID, inputID int) (textDataItemOutput models.TextDataItem, err error) {
+func (s *DBServices) GetTextDataItemByID(ctx context.Context, userID, inputID int) (textDataItemOutput models.TextDataItem, err error) {
 	s.l.ZL.Info("GetTextDataItemByID service has started..")
 	textDataItemOutput, err = s.s.GetTextDataItemByID(ctx, userID, inputID)
 	if err != nil {

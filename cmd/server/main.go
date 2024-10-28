@@ -61,8 +61,8 @@ func run() error {
 			}
 		}()
 	}
-	serv := services.NewServices(s, c, mL, *au)
-	h, err := handlers.NewHandlers(s, c, mL, *au, *serv)
+	serv := services.NewDBServices(s, c, mL, *au)
+	h, err := handlers.NewHandlers(s, c, mL, *au, serv)
 	if err != nil {
 		return fmt.Errorf("handlers constructor's error: %w", err)
 	}
