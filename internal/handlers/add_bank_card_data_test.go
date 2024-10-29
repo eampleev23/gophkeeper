@@ -16,6 +16,11 @@ import (
 )
 
 var confForTests *server_config.Config
+var loggerForTests *mlg.ZapLog
+var authForTests *myauth.Authorizer
+var storeForTests store.Store
+var servicesForTests *services.Services
+var handlersForTests *Handlers
 
 func TestHandlers_AddBankCardData(t *testing.T) {
 	confForTests, err := server_config.NewConfig()
@@ -23,23 +28,23 @@ func TestHandlers_AddBankCardData(t *testing.T) {
 		t.Log(err)
 	}
 
-	mL, err := mlg.NewZapLogger(confForTests.LogLevel)
+	loggerForTests, err := mlg.NewZapLogger(confForTests.LogLevel)
 	if err != nil {
 		t.Log(err)
 	}
 
-	au, err := myauth.Initialize(confForTests, mL)
+	authForTests, err := myauth.Initialize(confForTests, loggerForTests)
 	if err != nil {
 		t.Log(err)
 	}
 
-	s, err := store.NewStorage(confForTests, mL)
+	storeForTests, err := store.NewStorage(confForTests, loggerForTests)
 	if err != nil {
 		t.Log(err)
 	}
 
-	serv := services.NewDBServices(s, confForTests, mL, *au)
-	h, err := NewHandlers(s, confForTests, mL, *au, serv)
+	servicesForTests := services.NewDBServices(storeForTests, confForTests, loggerForTests, *authForTests)
+	handlersForTests, err := NewHandlers(storeForTests, confForTests, loggerForTests, *authForTests, servicesForTests)
 	if err != nil {
 		t.Log(err)
 	}
@@ -79,7 +84,7 @@ func TestHandlers_AddBankCardData(t *testing.T) {
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// вызываем хэндлер как обычную функцию
-			h.AddBankCardData(w, request)
+			handlersForTests.AddBankCardData(w, request)
 
 			// записываем результат из w
 			res := w.Result()
