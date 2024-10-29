@@ -2,7 +2,11 @@ package services
 
 import (
 	"context"
+	"github.com/eampleev23/gophkeeper/internal/mlg"
 	"github.com/eampleev23/gophkeeper/internal/models"
+	"github.com/eampleev23/gophkeeper/internal/myauth"
+	"github.com/eampleev23/gophkeeper/internal/server_config"
+	"github.com/eampleev23/gophkeeper/internal/store"
 )
 
 type Services interface {
@@ -20,4 +24,21 @@ type Services interface {
 	GetBankCardByID(ctx context.Context, userID, inputID int) (bankCardOutput models.BankCard, err error)
 	// GetTextDataItemByID возвращает зашифрованные текстовые данные.
 	GetTextDataItemByID(ctx context.Context, userID, inputID int) (textDataItemOutput models.TextDataItem, err error)
+}
+
+type DBServices struct {
+	s  store.Store
+	c  *server_config.Config
+	l  *mlg.ZapLog
+	au myauth.Authorizer
+}
+
+func NewDBServices(s store.Store, c *server_config.Config, l *mlg.ZapLog, au myauth.Authorizer) Services {
+	dbServices := &DBServices{
+		s:  s,
+		c:  c,
+		l:  l,
+		au: au,
+	}
+	return dbServices
 }

@@ -42,8 +42,8 @@ func TestRegister(t *testing.T) {
 		t.Log(err)
 	}
 
-	serv := services.NewServices(s, c, mL, *au)
-	h, err := handlers.NewHandlers(s, c, mL, *au, *serv)
+	serv := services.NewDBServices(s, c, mL, *au)
+	h, err := handlers.NewHandlers(s, c, mL, *au, serv)
 	if err != nil {
 		t.Log(err)
 	}
