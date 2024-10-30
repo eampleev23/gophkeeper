@@ -3,13 +3,13 @@ package handlers
 import (
 	"bytes"
 	"github.com/stretchr/testify/assert"
+	"io"
 	"net/http"
-	url2 "net/url"
+	"net/http/httptest"
 	"testing"
 )
 
 func TestHandlers_AddText(t *testing.T) {
-
 	// сначала описываем структуру - скелет ответа, который для нас важен в тесте хэндлера.
 	type want struct {
 		code int
@@ -23,42 +23,34 @@ func TestHandlers_AddText(t *testing.T) {
 		{
 			name: "positive test #1", // первый кейс имеет имя positive test #1
 			want: want{
-				code: http.StatusUnauthorized, // код ответа хэндлера 200
+				code: 400, // код ответа хэндлера 400
 			},
 		},
 	}
+
 	// перебираем все тест кейсы ( в нашем случае он всего один)
 	for _, test := range tests { // значение будет храниться в переменной test
-
 		t.Run(test.name, func(t *testing.T) { // запускаем в горутине каждый кейс параллельно
+			// создаем реквест, используем httptest вместо http (выбрасывает панику вместо классического поведения)
 
-			var textDataNewItemRequestStr = `{"meta-value": "`
-			textDataNewItemRequestStr += "фейковые данные для автотеста"
-			textDataNewItemRequestStr += `", "text-content": "`
-			textDataNewItemRequestStr += "Мороз и солнце; день чудесный! Еще ты дремлешь"
-			textDataNewItemRequestStr += `,"}`
+			body := []byte(`{
+    "meta-value": "стихотворение Пушкина Мороз и солнце день чудесный",
+    "text": "Мороз и солнце; день чудесный! Еще ты дремлешь, друг прелестный — Пора, красавица, проснись: Открой сомкнуты негой взоры Навстречу северной Авроры Звездою севера явись! Вечор, ты помнишь, вьюга злилась, На мутном небе мгла носилась; Луна, как бледное пятно, Сквозь тучи мрачные желтела, И ты печальная сидела — А нынче… погляди в окно: Под голубыми небесами Великолепными коврами, Блестя на солнце, снег лежит; Прозрачный лес один чернеет, И ель сквозь иней зеленеет, И речка подо льдом блестит. Вся комната янтарным блеском Озарена. Веселым треском Трещит затопленная печь. Приятно думать у лежанки. Но знаешь: не велеть ли в санки Кобылку бурую запречь? Скользя по утреннему снегу, Друг милый, предадимся бегу Нетерпеливого коня И навестим поля пустые, Леса, недавно столь густые, И берег, милый для меня."}`)
+			var ioReader io.Reader
+			ioReader = bytes.NewReader(body)
+			request := httptest.NewRequest(http.MethodPost, "/api/user/add-login-password", ioReader) // заполняем тип запроса, урл и тело.
+			// создаём новый Recorder
+			w := httptest.NewRecorder()
+			handlers := initHandlersForTests(t)
+			// вызываем хэндлер как обычную функцию
+			handlers.AddText(w, request)
 
-			var textDataNewItemRequestBytes = []byte(textDataNewItemRequestStr)
-
-			handler := "/api/user/add-text"
-			url, err := url2.JoinPath("http://localhost:8080", handler)
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(textDataNewItemRequestBytes))
-			if err != nil {
-				t.Fatal(err)
-			}
-
-			request.Header.Set("Content-Type", "application/json; charset=UTF-8")
-			client := &http.Client{}
-
-			response, err := client.Do(request)
-			if err != nil {
-				t.Fatal(err)
-			}
-			assert.Equal(t, test.want.code, response.StatusCode)
+			// записываем результат из w
+			res := w.Result()
+			// проверяем код ответа
+			assert.Equal(t, test.want.code, res.StatusCode)
+			// получаем и проверяем тело запроса
+			defer res.Body.Close()
 		})
 	}
 }

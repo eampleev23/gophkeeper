@@ -59,7 +59,7 @@ func (h *Handlers) AddBankCardData(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	// Если мы здесь, то логин-пароль успешно добавлены.
+	// Если мы здесь, то банковская карта успешно добавлена.
 	h.l.ZL.Info("Success creating new bank card", zap.Any("outputModel", outputModel))
 	w.WriteHeader(http.StatusOK)
 	return
