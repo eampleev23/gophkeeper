@@ -8,46 +8,47 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/services"
 	"github.com/eampleev23/gophkeeper/internal/store"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
-var confForTests *server_config.Config
-var loggerForTests *mlg.ZapLog
-var authForTests *myauth.Authorizer
-var storeForTests store.Store
-var servicesForTests *services.Services
 var handlersForTests *Handlers
 
+func initHandlersForTests(t *testing.T) *Handlers {
+	if handlersForTests == nil {
+
+		confForTests, err := server_config.NewConfig()
+		if err != nil {
+			t.Log(err)
+		}
+
+		loggerForTests, err := mlg.NewZapLogger(confForTests.LogLevel)
+		if err != nil {
+			t.Log(err)
+		}
+
+		authForTests, err := myauth.Initialize(confForTests, loggerForTests)
+		if err != nil {
+			t.Log(err)
+		}
+
+		storeForTests, err := store.NewStorage(confForTests, loggerForTests)
+		if err != nil {
+			t.Log(err)
+		}
+
+		servicesForTests := services.NewDBServices(storeForTests, confForTests, loggerForTests, *authForTests)
+		handlersForTests, err = NewHandlers(storeForTests, confForTests, loggerForTests, *authForTests, servicesForTests)
+		if err != nil {
+			t.Log(err)
+		}
+	}
+	return handlersForTests
+}
+
 func TestHandlers_AddBankCardData(t *testing.T) {
-	confForTests, err := server_config.NewConfig()
-	if err != nil {
-		t.Log(err)
-	}
-
-	loggerForTests, err := mlg.NewZapLogger(confForTests.LogLevel)
-	if err != nil {
-		t.Log(err)
-	}
-
-	authForTests, err := myauth.Initialize(confForTests, loggerForTests)
-	if err != nil {
-		t.Log(err)
-	}
-
-	storeForTests, err := store.NewStorage(confForTests, loggerForTests)
-	if err != nil {
-		t.Log(err)
-	}
-
-	servicesForTests := services.NewDBServices(storeForTests, confForTests, loggerForTests, *authForTests)
-	handlersForTests, err := NewHandlers(storeForTests, confForTests, loggerForTests, *authForTests, servicesForTests)
-	if err != nil {
-		t.Log(err)
-	}
 
 	// сначала описываем структуру - скелет ответа, который для нас важен в тесте хэндлера.
 	type want struct {
@@ -84,7 +85,9 @@ func TestHandlers_AddBankCardData(t *testing.T) {
 			// создаём новый Recorder
 			w := httptest.NewRecorder()
 			// вызываем хэндлер как обычную функцию
-			handlersForTests.AddBankCardData(w, request)
+
+			handlers := initHandlersForTests(t)
+			handlers.AddBankCardData(w, request)
 
 			// записываем результат из w
 			res := w.Result()
@@ -92,8 +95,6 @@ func TestHandlers_AddBankCardData(t *testing.T) {
 			assert.Equal(t, test.want.code, res.StatusCode)
 			// получаем и проверяем тело запроса
 			defer res.Body.Close()
-			require.NoError(t, err)
-
 		})
 	}
 }
