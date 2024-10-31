@@ -75,6 +75,7 @@ func run() error {
 	r.Post("/api/user/add-login-password", h.AddLoginPasswordData)
 	r.Post("/api/user/add-bank-card", h.AddBankCardData)
 	r.Post("/api/user/add-text", h.AddText)
+	r.Post("/api/user/add-file", h.AddFile)
 	r.Get("/api/user/get-data-items", h.GetDataItems)
 	r.Post("/api/user/get-login-pass", h.GetLoginPass)
 	r.Post("/api/user/get-bank-card", h.GetBankCard)

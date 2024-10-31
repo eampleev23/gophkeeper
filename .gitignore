@@ -25,6 +25,7 @@ vendor/
 .vscode
 golangci-lint/
 db/data/
+serv_file_store/
 
 # Local file store
 #./cmd/shortener/tmp/short-url-db.json
