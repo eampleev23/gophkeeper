@@ -12,6 +12,7 @@ func TestHandlers_GetDataItems(t *testing.T) {
 	type want struct {
 		method string
 		code   int
+		userID int
 	}
 
 	// далее описываем тест кейсы. Каждый тест кейс содержит имя и экземпляр структуры want с конкретными значениями
@@ -23,7 +24,8 @@ func TestHandlers_GetDataItems(t *testing.T) {
 			name: "positive test #1", // первый кейс имеет имя positive test #1
 			want: want{
 				method: http.MethodGet,
-				code:   http.StatusUnauthorized, // код ответа хэндлера 400
+				code:   http.StatusUnauthorized,
+				userID: 1,
 			},
 		},
 	}
