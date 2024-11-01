@@ -36,6 +36,9 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 		case 3:
 			fmt.Printf("[текст]")
 			break
+		case 4:
+			fmt.Printf("[файл]")
+			break
 		default:
 			fmt.Printf("[не известное значение, обновите клиент]")
 		}
@@ -79,6 +82,9 @@ func (clientApp *ClientApp) ShowDataItems(response *http.Response) error {
 		break
 	case "3":
 		clientApp.ShowText(response, indexes[inputIDInt])
+		break
+	case "4":
+		clientApp.ShowFile(response, indexes[inputIDInt])
 		break
 	default:
 		fmt.Println("Ошибка клиента, попробуйте обновить версию")

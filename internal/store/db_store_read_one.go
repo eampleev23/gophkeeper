@@ -94,3 +94,16 @@ func (d DBStore) GetTextDataItemByID(
 	}
 	return textDataItemOutput, nil
 }
+
+func (d DBStore) GetFileItemByID(ctx context.Context, userID, inputID int) (fileItemOutput models.FileDataItem, err error) {
+	d.l.ZL.Info("GetFileItemByID db method is called..")
+	row := d.dbConn.QueryRowContext(ctx,
+		`SELECT item_id, server_path FROM file_items WHERE item_id = $1 LIMIT 1`,
+		inputID,
+	)
+	err = row.Scan(&fileItemOutput.ID, &fileItemOutput.ServerPath) // Разбираем результат
+	if err != nil {
+		return fileItemOutput, fmt.Errorf("faild to get file item by this id %w", err)
+	}
+	return fileItemOutput, nil
+}

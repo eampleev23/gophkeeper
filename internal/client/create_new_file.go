@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/DrSmithFr/go-console/question"
 	"github.com/icza/gox/stringsx"
 	"io"
@@ -30,6 +31,7 @@ func (clientApp *ClientApp) CreateNewFile(response *http.Response) error {
 	defer file.Close()                // не забываем закрыть
 
 	body := &bytes.Buffer{} // создаём буфер
+
 	// на основе буфера конструируем multipart.Writer из пакета mime/multipart
 	writer := multipart.NewWriter(body)
 
@@ -38,12 +40,14 @@ func (clientApp *ClientApp) CreateNewFile(response *http.Response) error {
 	if err != nil {
 		return err
 	}
+
 	// копируем файл в форму
 	// multipart.Writer отформатирует данные и запишет в предоставленный буфер
 	_, err = io.Copy(part, file)
 	if err != nil {
 		return err
 	}
+
 	writer.Close()
 	handler := "/api/user/add-file"
 	url, err := url2.JoinPath(clientApp.RunAddr, handler)
@@ -58,7 +62,13 @@ func (clientApp *ClientApp) CreateNewFile(response *http.Response) error {
 	}
 	// добавляем заголовок запроса
 	request.Header.Set("Content-Type", writer.FormDataContentType())
+	request.Header.Add("Meta-Value", inputMetaValue)
 	response, err = clientApp.HttpClient.Do(request)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Вы удачно добавили файл под названием %s \n", inputMetaValue)
+	err = clientApp.ShowDataItems(response)
 	if err != nil {
 		return err
 	}

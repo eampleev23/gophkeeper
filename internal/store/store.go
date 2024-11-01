@@ -23,6 +23,8 @@ type Store interface {
 	InsertBankCard(ctx context.Context, inputModel models.BankCard) (outputModel models.BankCard, err error)
 	// InsertTextDataItem - метод для добавления произвольных текстовых данных.
 	InsertTextDataItem(ctx context.Context, inputModel models.TextDataItem) (outputModel models.TextDataItem, err error)
+	// InsertFileDataItem - метод для добавления файла.
+	InsertFileDataItem(ctx context.Context, inputModel models.FileDataItem) (outputModel models.FileDataItem, err error)
 	// GetDataItemsByUserID возвращает все сохраненные пароли пользователя
 	GetDataItemsByUserID(ctx context.Context, userID int) (dataItems []models.DataItem, err error)
 	// GetLoginPassItemByID возвращает конкретную пару логин-пароль
@@ -31,6 +33,8 @@ type Store interface {
 	GetBankCardByID(ctx context.Context, userID, inputID int) (bankCardOutput models.BankCard, err error)
 	// GetTextDataItemByID возвращает зашифрованные текстовые данные.
 	GetTextDataItemByID(ctx context.Context, userID, inputID int) (textDataItemOutput models.TextDataItem, err error)
+	// GetFileItemByID возвращает файл.
+	GetFileItemByID(ctx context.Context, userID, inputID int) (fileItemOutput models.FileDataItem, err error)
 }
 
 func NewStorage(c *server_config.Config, l *mlg.ZapLog) (Store, error) {
