@@ -31,11 +31,17 @@ func run() error {
 	switch firstMenuItem {
 	case "r":
 		// запрашиваем данные для регистрации
-		app.Register()
+		err = app.Register()
+		if err != nil {
+			return err
+		}
 		break
 	case "a":
 		// запрашиваем данные для авторизации
-		app.Login(nil)
+		err = app.Login(nil)
+		if err != nil {
+			return err
+		}
 		break
 	}
 	return nil
