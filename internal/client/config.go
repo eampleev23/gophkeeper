@@ -23,6 +23,7 @@ func NewApp() (*ClientApp, error) {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		fmt.Println("Ошибка клиента, попробуйте обновить версию..")
+		return nil, err
 	}
 
 	client := &http.Client{
