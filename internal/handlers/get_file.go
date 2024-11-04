@@ -5,11 +5,13 @@ import (
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"go.uber.org/zap"
 	"net/http"
+	"os"
 	"strings"
 )
 
 func (h *Handlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	h.l.ZL.Info("Handling GET file has called..")
+	w.Header().Set("Content-Disposition", "attachment; filename=../../serv_file_store/test3.pdf")
 	// Проверяем формат запроса
 	contentType := r.Header.Get("Content-Type")
 	supportsJSON := strings.Contains(contentType, "application/json")
@@ -50,7 +52,17 @@ func (h *Handlers) GetFile(w http.ResponseWriter, r *http.Request) {
 		zap.Int("id:", fileItem.ID),
 		zap.String("server-path", fileItem.ServerPath),
 	)
+
+	// open file (check if exists)
+	_, err = os.Open(fileItem.ServerPath)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode("Unable to open file ")
+		return
+	}
+
 	// здесь нужно открыть этот файл и передать его на клиент, клиент создает у себя новый файл и записывает
 	// в него данные из этого файла..
+	// force a download with the content- disposition field
 	http.ServeFile(w, r, fileItem.ServerPath)
 }

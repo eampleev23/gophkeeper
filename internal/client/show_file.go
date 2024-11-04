@@ -18,13 +18,9 @@ func (clientApp *ClientApp) ShowFile(response *http.Response, inputID string) er
 
 	fmt.Println(pathToSaveFile)
 
-	var fileRequestStr = `{"id":`
-	fileRequestStr += inputID
-	fileRequestStr += `}`
-
+	var fileRequestStr = `{"id":9}`
 	var fileRequest = []byte(fileRequestStr)
 
-	//---
 	// Create the file
 	out, err := os.Create(pathToSaveFile)
 	if err != nil {
@@ -33,7 +29,7 @@ func (clientApp *ClientApp) ShowFile(response *http.Response, inputID string) er
 	defer out.Close()
 
 	// Get the data
-	_, res, err := clientApp.RequestToApi(fileRequest, "api/user/get-file/", http.MethodPost)
+	_, res, err := clientApp.RequestToApi(fileRequest, "api/user/get-file/", http.MethodGet)
 	if err != nil {
 		fmt.Println("Ошибка при получении ответа от сервера, попробуйте обновить клиент")
 		return err
@@ -45,7 +41,6 @@ func (clientApp *ClientApp) ShowFile(response *http.Response, inputID string) er
 	if err != nil {
 		return err
 	}
-	//---
-	//clientApp.ShowDataItems(nil)
+
 	return nil
 }

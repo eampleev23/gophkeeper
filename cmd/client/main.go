@@ -32,13 +32,10 @@ func run() error {
 	case "r":
 		// запрашиваем данные для регистрации
 		app.Register()
-		//register(client, cmd, qh)
 		break
 	case "a":
 		// запрашиваем данные для авторизации
-		//login(app.HttpClient, app.Cmd, app.Qh, nil)
 		app.Login(nil)
-		//login(client, cmd, qh, nil)
 		break
 	}
 	return nil

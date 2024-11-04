@@ -80,7 +80,8 @@ func run() error {
 	r.Post("/api/user/get-login-pass", h.GetLoginPass)
 	r.Post("/api/user/get-bank-card", h.GetBankCard)
 	r.Post("/api/user/get-text-data", h.GetTextData)
-	r.Post("/api/user/get-file/", h.GetFile)
+	r.Get("/api/user/get-file/", h.GetFile)
+
 	err = http.ListenAndServe(c.RunAddr, r)
 	if err != nil {
 		return fmt.Errorf("ошибка ListenAndServe: %w", err)
