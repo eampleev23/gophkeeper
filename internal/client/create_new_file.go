@@ -22,7 +22,7 @@ func (clientApp *ClientApp) CreateNewFile(response *http.Response) error {
 	inputFilePath := clientApp.Qh.Ask(
 		question.
 			NewQuestion(
-				`Введите путь к файлу, который необходимо загрузить на сервер`),
+				`Введите путь к файлу, который необходимо загрузить на сервер (не более 10 мб)`),
 	)
 	inputMetaValue = stringsx.Clean(inputMetaValue)
 	inputFilePath = stringsx.Clean(inputFilePath)
