@@ -47,23 +47,15 @@ func (clientApp *ClientApp) Login(response *http.Response) error {
 		fmt.Println("Ошибка получения ответа, попробуйте обновить версию клиента")
 		return err
 	}
-	if response.StatusCode == http.StatusOK {
-		fmt.Println("Вы удачно авторизовались")
-		clientApp.Login(response)
+	isOk, err := clientApp.CheckStatusResponse(response)
+	if isOk {
+		fmt.Printf("Вы удачно авторизовались %s \n")
+		clientApp.ShowAuthMenu(response)
 		return nil
-	}
-	if response.StatusCode == http.StatusUnauthorized {
-		fmt.Println("Пользователь с такими логином и паролем не зарегистрирован")
-		return err
-	}
-	if response.StatusCode == http.StatusBadRequest {
-		fmt.Println("Ошибка клиента, попробуйте обновить версию")
-		return err
-	}
-	if response.StatusCode == http.StatusInternalServerError {
-		fmt.Println("Внутренняя ошибка сервера, попробуйте еще раз..")
-		clientApp.Login(nil)
-		return err
+	} else {
+		fmt.Printf("Ошибка клиента, попробуйте обновить приложение\n")
+		clientApp.ShowAuthMenu(response)
+		return nil
 	}
 	return err
 }

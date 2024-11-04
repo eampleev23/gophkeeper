@@ -34,23 +34,15 @@ func (clientApp *ClientApp) CreateNewTextData(response *http.Response) error {
 		fmt.Println("Ошибка при получении ответа от сервера, попробуйте обновить клиент")
 		return err
 	}
-	if response.StatusCode == http.StatusOK {
+
+	isOk, err := clientApp.CheckStatusResponse(response)
+	if isOk {
 		fmt.Printf("Вы удачно добавили текстовые данные под названием %s \n", inputMetaValue)
 		clientApp.ShowAuthMenu(response)
 		return nil
+	} else {
+		fmt.Printf("Ошибка клиента, попробуйте обновить приложение\n")
+		clientApp.ShowAuthMenu(response)
+		return nil
 	}
-	if response.StatusCode != http.StatusBadRequest {
-		fmt.Println("Ошибка получения ответа от сервера, попробуйте обновить версию клиента")
-		return err
-	}
-	if response.StatusCode != http.StatusInternalServerError {
-		fmt.Println("Ошибка получения ответа от сервера, попробуйте обновить версию клиента")
-		return err
-	}
-	if response.StatusCode != http.StatusUnauthorized {
-		fmt.Println("Необходимо авторизоваться")
-		clientApp.Login(response)
-		return err
-	}
-	return err
 }

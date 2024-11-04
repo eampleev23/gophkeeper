@@ -33,25 +33,15 @@ func (clientApp *ClientApp) Register() error {
 		return err
 	}
 
-	if response.StatusCode == http.StatusOK {
-		fmt.Println("Вы удачно зарегистрировались и авторизовались")
-		clientApp.Login(response)
+	isOk, err := clientApp.CheckStatusResponse(response)
+	if isOk {
+		fmt.Printf("Вы удачно зарегистрировались и авторизовались %s \n")
+		clientApp.ShowAuthMenu(response)
 		return nil
-	}
-	if response.StatusCode == http.StatusConflict {
-		fmt.Println("Пользователь с таким логином уже зарегистрирован.")
-		clientApp.Register()
-		return err
-	}
-	if response.StatusCode == http.StatusBadRequest {
-		fmt.Println("Ошибка клиента, попробуйте обновить версию")
-		clientApp.Register()
-		return err
-	}
-	if response.StatusCode == http.StatusInternalServerError {
-		fmt.Println("Внутренняя ошибка сервера, попробуйте еще раз..")
-		clientApp.Register()
-		return err
+	} else {
+		fmt.Printf("Ошибка клиента, попробуйте обновить приложение\n")
+		clientApp.ShowAuthMenu(response)
+		return nil
 	}
 	return err
 }
