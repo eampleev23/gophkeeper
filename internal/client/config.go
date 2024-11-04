@@ -52,10 +52,10 @@ func (clientApp *ClientApp) SetValues() error {
 	flag.StringVar(&clientApp.RunAddr, "a", "http://localhost:8080/", "Set listening address and port for server")
 
 	// принимаем секретный ключ сервера для авторизации
-	flag.StringVar(&clientApp.SecretKey, "s", "e4853f5c4810101e88f1898db21c15d3", "server's secret key for authorization")
+	flag.StringVar(&clientApp.SecretKey, "s", "", "server's secret key for authorization")
 
 	// принимаем секретный ключ сервера для расшифровки
-	flag.StringVar(&clientApp.SecretKeyForData, "sd", "TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD", "secret key for data encrypting")
+	flag.StringVar(&clientApp.SecretKeyForData, "sd", "", "secret key for data encrypting")
 
 	if envRunAddr := os.Getenv("RUN_ADDRESS"); envRunAddr != "" {
 		clientApp.RunAddr = envRunAddr
