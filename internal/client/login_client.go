@@ -38,6 +38,7 @@ func (clientApp *ClientApp) Login(response *http.Response) error {
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(loginRequest))
 	if err != nil {
 		fmt.Println("Ошибка, попробуйте обновить версию клиента")
+		return err
 	}
 
 	request.Header.Set("Content-Type", "application/json; charset=UTF-8")
