@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/eampleev23/gophkeeper/internal/models"
 	"go.uber.org/zap"
 	"io"
@@ -31,8 +30,8 @@ func (h *Handlers) AddFile(w http.ResponseWriter, r *http.Request) {
 	// Get handler for filename, size and headers
 	file, handler, err := r.FormFile("uploadfile")
 	if err != nil {
-		fmt.Println("Error Retrieving the File")
-		fmt.Println(err)
+		h.l.ZL.Error("Error Retrieving the File", zap.Error(err))
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer file.Close()
