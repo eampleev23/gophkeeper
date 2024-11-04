@@ -41,6 +41,5 @@ func (clientApp *ClientApp) ShowFile(response *http.Response, inputID string) er
 	if err != nil {
 		return err
 	}
-
 	return nil
 }

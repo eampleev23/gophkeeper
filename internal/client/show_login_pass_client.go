@@ -27,8 +27,8 @@ func (clientApp *ClientApp) ShowLoginPass(response *http.Response, inputID strin
 
 	err = json.Unmarshal(responseData, &loginPasswordItem)
 
-	unPackedLogin := UnpackData(loginPasswordItem.Login, loginPasswordItem.NonceLogin)
-	unPackedPassword := UnpackData(loginPasswordItem.Password, loginPasswordItem.NoncePassword)
+	unPackedLogin := clientApp.UnpackData(loginPasswordItem.Login, loginPasswordItem.NonceLogin)
+	unPackedPassword := clientApp.UnpackData(loginPasswordItem.Password, loginPasswordItem.NoncePassword)
 	unPackedPassword = strings.TrimSuffix(unPackedPassword, ",")
 	fmt.Printf("\nЗапрашиваемые логин и пароль: %s::%s\n\n", unPackedLogin, unPackedPassword)
 

@@ -11,11 +11,12 @@ import (
 )
 
 type ClientApp struct {
-	RunAddr    string
-	HttpClient *http.Client
-	Cmd        *go_console.Script
-	Qh         *question.Helper
-	SecretKey  string
+	RunAddr          string
+	HttpClient       *http.Client
+	Cmd              *go_console.Script
+	Qh               *question.Helper
+	SecretKey        string
+	SecretKeyForData string
 }
 
 func NewApp() (*ClientApp, error) {
@@ -53,12 +54,19 @@ func (clientApp *ClientApp) SetValues() error {
 	// принимаем секретный ключ сервера для авторизации
 	flag.StringVar(&clientApp.SecretKey, "s", "e4853f5c4810101e88f1898db21c15d3", "server's secret key for authorization")
 
+	// принимаем секретный ключ сервера для расшифровки
+	flag.StringVar(&clientApp.SecretKeyForData, "sd", "TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD", "secret key for data encrypting")
+
 	if envRunAddr := os.Getenv("RUN_ADDRESS"); envRunAddr != "" {
 		clientApp.RunAddr = envRunAddr
 	}
 
 	if envSecretKey := os.Getenv("SECRET_KEY"); envSecretKey != "" {
 		clientApp.SecretKey = envSecretKey
+	}
+
+	if envSecretKeyForData := os.Getenv("SECRET_KEY_FOR_DATA"); envSecretKeyForData != "" {
+		clientApp.SecretKeyForData = envSecretKeyForData
 	}
 	return nil
 }

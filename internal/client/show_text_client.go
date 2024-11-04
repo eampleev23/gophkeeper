@@ -26,7 +26,7 @@ func (clientApp *ClientApp) ShowText(response *http.Response, inputID string) er
 
 	err = json.Unmarshal(responseData, &textDataItem)
 
-	unPackedTextContent := UnpackData(textDataItem.TextContent, textDataItem.NonceTextContent)
+	unPackedTextContent := clientApp.UnpackData(textDataItem.TextContent, textDataItem.NonceTextContent)
 	unPackedTextContent = strings.TrimSuffix(unPackedTextContent, ",")
 	fmt.Printf("\nЗапрашиваемые текстовые данные: %s\n\n", unPackedTextContent)
 

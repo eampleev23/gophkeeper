@@ -32,7 +32,7 @@ func (c *Config) SetValues() {
 	flag.StringVar(&c.DBDSN, "d", "postgresql://gophkeeper:gophkeeper@localhost:5432/gophkeeper?sslmode=disable", "postgres database")
 	// принимаем секретный ключ сервера для авторизации
 	flag.StringVar(&c.SecretKey, "s", "e4853f5c4810101e88f1898db21c15d3", "server's secret key for authorization")
-	// принимаем секретный ключ сервера для авторизации
+	// принимаем секретный ключ сервера для расшифровки
 	flag.StringVar(&c.SecretKeyForData, "sd", "TuUdlQmYyD1DTaiGVV31ipyWnbKa0jUD", "secret key for data encrypting")
 
 	if envRunAddr := os.Getenv("RUN_ADDRESS"); envRunAddr != "" {
