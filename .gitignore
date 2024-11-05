@@ -14,6 +14,7 @@
 
 # Binaries
 cmd/server/server
+cmd/client/client
 
 # Dependency directories (remove the comment below to include it)
 vendor/
@@ -24,6 +25,7 @@ vendor/
 .vscode
 golangci-lint/
 db/data/
+serv_file_store/
 
 # Local file store
 #./cmd/shortener/tmp/short-url-db.json
