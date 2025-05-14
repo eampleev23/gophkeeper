@@ -50,7 +50,7 @@ func NewApp() (*ClientApp, error) {
 func (clientApp *ClientApp) SetValues() error {
 	// регистрируем переменную flagRunAddr как аргумент -a со значением по умолчанию localhost:8080
 	//flag.StringVar(&clientApp.RunAddr, "a", "http://localhost:8080/", "Set listening address and port for server")
-	flag.StringVar(&clientApp.RunAddr, "a", "https://212.193.48.196:8080/", "Set listening address and port for server")
+	flag.StringVar(&clientApp.RunAddr, "a", "http://212.193.48.196:8080/", "Set listening address and port for server")
 
 	// принимаем секретный ключ сервера для авторизации
 	flag.StringVar(&clientApp.SecretKey, "s", "e4853f5c4810101e88f1898db21c15d3", "server's secret key for authorization")
